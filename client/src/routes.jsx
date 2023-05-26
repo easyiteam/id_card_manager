@@ -82,6 +82,14 @@ const routes = [
     route: "/addcard",
     component: <AddCard />,
   },
+  {
+    type: "auth",
+    name: "Connexion",
+    key: "login",
+    icon: <Icon fontSize="small">add</Icon>,
+    route: "/auth/login",
+    component: <Login />,
+  },
 ];
 
 export default routes;

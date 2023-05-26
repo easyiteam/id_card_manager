@@ -43,22 +43,40 @@ const AuthContextProvider = ({ children }) => {
 
   const token = localStorage.getItem("token");
 
+  // console.log(token)
   useEffect(() => {
-    if (!token) return;
+    const tokenA = localStorage.getItem("token");
 
-    setIsAuthenticated(true);
-    navigate(location.pathname);
+    if (!tokenA) {
+      return
+    }else {
+      console.log(tokenA)
+
+      setIsAuthenticated(true);
+      if (location.pathname === '/auth/login') {
+        navigate("/dashboard");
+      } else {
+        navigate(location.pathname);
+      }
+    };
   }, []);
 
   useEffect(() => {
-    if (!token) return;
+    const tokenB = localStorage.getItem("token");
 
-    setIsAuthenticated(isAuthenticated);
-    if (location.pathname === "/auth/login" || location.pathname === "/auth/register") {
-      navigate("/dashboard");
-    } else {
-      navigate(location.pathname);
-    }
+    if (!tokenB) {
+      return
+    }else {
+      console.log(location)
+
+      setIsAuthenticated(isAuthenticated);
+      if (location.pathname == '/auth/login' || location.pathname == '/auth/register') {
+        navigate("/dashboard");
+      } else {
+        navigate(location.pathname);
+      }
+
+    };
   }, [isAuthenticated]);
 
   const login = (token) => {

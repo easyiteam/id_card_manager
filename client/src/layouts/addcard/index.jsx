@@ -29,11 +29,8 @@ import MDButton from "@/components/MDButton";
 import DashboardLayout from "@/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "@/examples/Navbars/DashboardNavbar";
 import Footer from "@/examples/Footer";
-import DataTable from "@/examples/Tables/DataTable";
 
 // Data
-import authorsTableData from "@/layouts/tables/data/authorsTableData";
-import projectsTableData from "@/layouts/tables/data/projectsTableData";
 import CardService from "@/services/card-service";
 import { AuthContext } from "@/context";
 
@@ -43,9 +40,14 @@ import bgCard from "@/assets/images/bg_card.png";
 import bgBottom from "@/assets/images/bg_bottom.png";
 import imageTest from "@/assets/images/image_test.png";
 
-function Tables() {
-  const { columns, rows } = authorsTableData();
-  const { columns: pColumns, rows: pRows } = projectsTableData();
+import { Uploader } from "uploader"; 
+import { UploadButton, UploadDropzone } from "react-uploader";
+
+import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
+import 'react-html5-camera-photo/build/css/index.css';
+
+function AddCard() {
+  
   const authContext = useContext(AuthContext);
 
   const [user, setUser] = useState({});
@@ -60,6 +62,52 @@ function Tables() {
     sex: "",
   });
 
+  // PHOTO UPLOADING
+  // Initialize once (at the start of your app).
+  const uploader = Uploader({
+    apiKey: "free" // Get production API keys from Upload.io
+  });
+
+  // Configuration options: https://upload.io/uploader#customize
+  const uploadOptions = { 
+    maxFileCount: 1,
+    mimeTypes: [
+      "image/png"
+    ],
+    multi: false,
+    path: {
+      fileName: inputs.name + "_" + inputs.surname + ".png",
+      fileNameFallback: inputs.name + "_" + inputs.surname + ".png",
+      fileNameVariablesEnabled: true,
+      folderPath: "/uploads",
+      folderPathVariablesEnabled: true
+    },
+    showFinishButton: true,
+  };
+
+  // CAMERA FUNCTIONS
+  function handleTakePhoto (dataUri) {
+    // Do stuff with the photo...
+    console.log('takePhoto');
+  }
+
+  function handleTakePhotoAnimationDone (dataUri) {
+    // Do stuff with the photo...
+    console.log('takePhoto');
+  }
+
+  function handleCameraError (error) {
+    console.log('handleCameraError', error);
+  }
+
+  function handleCameraStart (stream) {
+    console.log('handleCameraStart');
+  }
+
+  function handleCameraStop () {
+    console.log('handleCameraStop');
+  }
+  
   const [errors, setErrors] = useState({
     cardNumberError: false,
     pvError: false,
@@ -210,6 +258,40 @@ function Tables() {
                       error={errors.surnameError}
                     />
                   </MDBox>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={6} lg={6}>
+                      <MDBox mb={2}>
+                        <UploadDropzone uploader={uploader}
+                                      options={uploadOptions}
+                                      onUpdate={files => alert(files.map(x => x.fileUrl).join("\n"))}
+                                      height="375px"  
+                                      text="Ajouter une photo"
+                      />
+                      </MDBox>
+                    </Grid >
+
+                    <Grid item xs={12} md={6} lg={6}>
+                      <MDBox mb={2}>
+                        <Camera
+                          onTakePhoto = { (dataUri) => { handleTakePhoto(dataUri); } }
+                          onTakePhotoAnimationDone = { (dataUri) => { handleTakePhotoAnimationDone(dataUri); } }
+                          onCameraError = { (error) => { handleCameraError(error); } }
+                          idealFacingMode = {FACING_MODES.ENVIRONMENT}
+                          idealResolution = {{height: 375}}
+                          imageType = {IMAGE_TYPES.JPG}
+                          imageCompression = {0.97}
+                          isMaxResolution = {true}
+                          isImageMirror = {false}
+                          isSilentMode = {false}
+                          isDisplayStartCameraError = {true}
+                          isFullscreen = {false}
+                          sizeFactor = {1}
+                          onCameraStart = { (stream) => { handleCameraStart(stream); } }
+                          onCameraStop = { () => { handleCameraStop(); } }
+                        />
+                      </MDBox>
+                    </Grid >
+                  </Grid>
                   <MDBox mt={2} mb={1}>
                     <MDButton variant="gradient" color="info" type="submit">
                       Enregistrer
@@ -276,4 +358,4 @@ function Tables() {
   );
 }
 
-export default Tables;
+export default AddCard;
