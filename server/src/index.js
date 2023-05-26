@@ -17,7 +17,7 @@ dotenv.config();
 const PORT = process.env.PORT || 8080;
 const app = express();
 
-const whitelist = "http://localhost:3000";
+const whitelist = "http://localhost:5173";
 const corsOptions = {
   // origin: function (origin, callback) {
   //   if (!origin || whitelist.indexOf(origin) !== -1) {
@@ -26,13 +26,13 @@ const corsOptions = {
   //     callback(new Error("Not allowed by CORS"));
   //   }
   // },
-  origin: 'http://localhost:3000',
+  origin: 'http://localhost:5173',
   credentials: true,
 };
 
-// dbConnect();
+// dbConnect(); 
 
-/**
+/** 
  * Connect to MongoDB
  * @type {string}
  */
