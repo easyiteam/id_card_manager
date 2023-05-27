@@ -76,7 +76,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Ajouter une carte",
+    name: "Créer une carte",
     key: "addcard",
     icon: <Icon fontSize="small">add</Icon>,
     route: "/addcard",

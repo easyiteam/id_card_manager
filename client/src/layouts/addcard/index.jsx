@@ -57,7 +57,7 @@ function AddCard() {
   
   const authContext = useContext(AuthContext);
 
-  const [user, setUser] = useState({});
+  const [card, setCard] = useState({});
   const [newCardErrors, setNewCardError] = useState(null);
 
   const randNumber = Math.floor(1000 + Math.random() * 8998);
@@ -109,7 +109,7 @@ function AddCard() {
     genderError: false,
   });
 
-  const addNewCardHandler = (newCard) => setUser(newCard);
+  const addNewCardHandler = (newCard) => setCard(newCard);
 
 
   const changeHandler = (e) => {
@@ -120,7 +120,7 @@ function AddCard() {
   };
 
   const submitHandler = async (e) => {
-    // check rememeber me?
+
     e.preventDefault();
     
     if (inputs.name.trim().length < 3) {
@@ -128,7 +128,7 @@ function AddCard() {
       return;
     }
 
-    const newCard = { card_number: inputs.card_number, pv: inputs.pv, pv_date: inputs.pv_date, gender: inputs.gender, name: inputs.name, surname: inputs.surname, sex: inputs.sex };
+    const newCard = { card_number: inputs.card_number, pv: inputs.pv, pv_date: inputs.pv_date, gender: inputs.gender, name: inputs.name, surname: inputs.surname, };
     addNewCardHandler(newCard);
 
     const cardData = {
@@ -141,6 +141,7 @@ function AddCard() {
     try {
       const response = await CardService.create(cardData);
       // authContext.login(response.access_token, response.refresh_token);
+      console.log(response)
     } catch (res) {
       if (res.hasOwnProperty("message")) {
         setNewCardError(res.message);
@@ -355,7 +356,7 @@ function AddCard() {
                   </MDBox>
                   <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" pt={5} pl={6.5} pr={6.5} pb={2}>
                     <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000" }}>
-                      Par arrêté <strong>PV N° {inputs.pv}</strong> du {inputs.pv_date}, { inputs.gender == "M" ? "Mr" : "Mdme" } {inputs.name} {inputs.surname} a prêté serment prescrit par la loi devant le Tribunal Civil de Cotonou
+                      Par arrêté <strong>PV N° {inputs.pv}</strong> du { inputs.pv_date != "" ? formatDate(inputs.pv_date) : ""}, { inputs.gender == "M" ? "Mr" : "Mdme" } {inputs.name} {inputs.surname} a prêté serment prescrit par la loi devant le Tribunal Civil de Cotonou
                     </MDTypography>
                   </MDBox>
                 </MDBox>
