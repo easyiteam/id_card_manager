@@ -1,9 +1,5 @@
 import dotenv from "dotenv";
-import nodemailer from "nodemailer";
-import randomToken from "random-token";
-import bcrypt from "bcrypt";
 import { cardModel } from "../../schemas/card.schema.js";
-import jwt from 'jsonwebtoken';
 
 dotenv.config();
 

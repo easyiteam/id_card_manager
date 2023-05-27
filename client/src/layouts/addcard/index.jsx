@@ -53,6 +53,9 @@ import Dropzone from "./data/Dropzone";
 // cuid is a simple library to generate unique IDs
 import cuid from "cuid";
 
+import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
+import 'react-html5-camera-photo/build/css/index.css';
+
 function AddCard() {
   
   const authContext = useContext(AuthContext);
@@ -120,8 +123,8 @@ function AddCard() {
   };
 
   const submitHandler = async (e) => {
-
     e.preventDefault();
+    console.log(e)
     
     if (inputs.name.trim().length < 3) {
       setErrors({ ...errors, nameError: true });
@@ -133,8 +136,8 @@ function AddCard() {
 
     const cardData = {
       data: {
-        type: "token",
-        attributes: { ...newCard },
+        type: "cards",
+        attributes: { ...newCard, card_number: newCard.card_number },
       },
     };
 

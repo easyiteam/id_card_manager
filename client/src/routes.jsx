@@ -39,6 +39,7 @@ Coded by www.creative-tim.com
 import Dashboard from "@/layouts/dashboard";
 import Tables from "@/layouts/tables";
 import AddCard from "@/layouts/addcard";
+import Settings from "@/layouts/settings";
 import Billing from "@/layouts/billing";
 import RTL from "@/layouts/rtl";
 import Notifications from "@/layouts/notifications";
@@ -81,6 +82,14 @@ const routes = [
     icon: <Icon fontSize="small">add</Icon>,
     route: "/addcard",
     component: <AddCard />,
+  },
+  {
+    type: "collapse",
+    name: "Paramètres",
+    key: "settings",
+    icon: <Icon fontSize="small">settings</Icon>,
+    route: "/settings",
+    component: <Settings />,
   },
   {
     type: "auth",
