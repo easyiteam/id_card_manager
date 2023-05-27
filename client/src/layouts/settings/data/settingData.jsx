@@ -20,13 +20,27 @@ import MDBox from "@/components/MDBox";
 import MDTypography from "@/components/MDTypography";
 import MDAvatar from "@/components/MDAvatar";
 import MDBadge from "@/components/MDBadge";
+import { useCallback, useContext, useLayoutEffect, useRef, useState } from "react";
 
 // Images
 import team2 from "@/assets/signatures/team-2.jpg";
 // import team3 from "@/assets/signatures/team-3.jpg";
 // import team4 from "@/assets/signatures/team-4.jpg";
+import SettingService from "@/services/setting-service";
 
-export default function data() {
+export default async  function data() {
+
+    // const changeHandler = async (e) => {
+        const [allSettings, setSetting] = useState({});
+
+        try {
+            const response = await SettingService.getAll();
+            console.log(response)
+            setSetting(response.data)
+        } catch (res) {
+            console.log(res)
+        }
+    // }
 
     function formatDate(input) {
         let datePart = input.match(/\d+/g),
@@ -50,32 +64,33 @@ export default function data() {
     );
 
     return {
-        columns: [
-        { Header: "Nom et prénoms", accessor: "signataire", width: "45%", align: "left" },
-        { Header: "status", accessor: "status", align: "center" },
-        { Header: "ajouté le", accessor: "created_at", align: "center" },
-        { Header: "action", accessor: "action", align: "center" },
-        ],
+        columns: allSettings
+        // columns: [
+        // { Header: "Nom et prénoms", accessor: "signataire", width: "45%", align: "left" },
+        // { Header: "status", accessor: "status", align: "center" },
+        // { Header: "ajouté le", accessor: "created_at", align: "center" },
+        // { Header: "action", accessor: "action", align: "center" },
+        // ],
 
-        rows: [
-        {
-            signataire: <SignAuthor signature={team2} sign_author="John Michael" email="john@creative-tim.com" />,
-            status: (
-            <MDBox ml={-1}>
-                <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
-            </MDBox>
-            ),
-            created_at: (
-            <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-               { formatDate('26/04/2838') }
-            </MDTypography>
-            ),
-            action: (
-            <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-                Editer
-            </MDTypography>
-            ),
-        },
-        ],
+        // rows: [
+        // {
+        //     signataire: <SignAuthor signature={team2} sign_author="John Michael" email="john@creative-tim.com" />,
+        //     status: (
+        //     <MDBox ml={-1}>
+        //         <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
+        //     </MDBox>
+        //     ),
+        //     created_at: (
+        //     <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+        //        { formatDate('26/04/2838') }
+        //     </MDTypography>
+        //     ),
+        //     action: (
+        //     <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+        //         Editer
+        //     </MDTypography>
+        //     ),
+        // },
+        // ],
     };
 }

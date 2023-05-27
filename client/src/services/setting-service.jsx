@@ -4,22 +4,27 @@ class SettingService {
   // cardEndpoint = process.env.API_URL;
 
   create = async (payload) => {
-    const createEndpoint = 'create';
+    const createEndpoint = 'setting/create';
     return await HttpService.post(createEndpoint, payload);
   };
 
   read = async () => {
-    const getSetting = 'read';
+    const getSetting = 'setting/read';
     return await HttpService.get(getSetting);
+  };
+  
+  getAll = async () => {
+    const getAllSettings = 'setting/getAll';
+    return await HttpService.get(getAllSettings);
   };
 
   update = async (newCardInfo) => {
-    const updateEndpoint = 'update';
+    const updateEndpoint = 'setting/update';
     return await HttpService.patch(updateEndpoint, newCardInfo);
   };
 
   delete = async (payload) => {
-    const deleteEndpoint = 'delete';
+    const deleteEndpoint = 'setting/delete';
     return await HttpService.delete(deleteEndpoint, payload);
   };
 }

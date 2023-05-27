@@ -11,10 +11,10 @@ import cron from "node-cron";
 import ReseedAction from "./mongo/ReseedAction.js";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
-
+import fileupload from "express-fileupload"
 dotenv.config();
 
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT || 8082;
 const app = express();
 
 const whitelist = "http://localhost:5173";
@@ -48,6 +48,7 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
+app.use(fileupload());
 app.use(bodyParser.json({ type: "application/vnd.api+json", strict: false }));
 
 app.get("/", function(req, res) {

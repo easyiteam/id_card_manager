@@ -8,8 +8,8 @@ export default defineConfig({
     define: {
         'process.env': {
             APP_MODE: 'dev',
-            REACT_APP_API_URL: "http://localhost:8081",
-            REACT_APP_URL: "http://localhost:8081",
+            REACT_APP_API_URL: "http://localhost:8082",
+            REACT_APP_URL: "http://localhost:8082",
             REACT_APP_IS_DEMO: false
         }
     },

@@ -1,17 +1,4 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.1.0
-=========================================================
 
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
 
 // @mui material components
 import Grid from "@mui/material/Grid";
@@ -19,7 +6,6 @@ import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
 import MenuItem from '@mui/material/MenuItem';
 import Menu from "@mui/material/Menu";
-import './styles.css';
 
 import { useCallback, useContext, useLayoutEffect, useRef, useState } from "react";
 
@@ -37,6 +23,7 @@ import DataTable from "@/examples/Tables/DataTable";
 
 // Import the dropzone component
 import Dropzone from "./data/Dropzone";
+import "./styles.css";
 
 // Data
 import SettingService from "@/services/setting-service";
@@ -50,6 +37,7 @@ function SettingFunction() {
   const authContext = useContext(AuthContext);
 
   const { columns, rows } = data();
+  console.log(columns)
 
   const [setting, setSetting] = useState({});
   const [newSettingErrors, setNewSettingError] = useState(null);
@@ -59,25 +47,27 @@ function SettingFunction() {
     signature: "",
   });
 
-  // PHOTO UPLOADING
-  // Create a state called images using useState hooks and pass the initial value as empty array
-  // const [image, setImage] = useState([]);
+  const [file, setFile] = useState("");
 
+  // IMAGE UPLOADING
   const onDrop = useCallback(acceptedFiles => {
-    // console.log('gogo', acceptedFiles)
-    // Loop through accepted files
+    console.log('', acceptedFiles[0])
+    setInputs( { ...inputs, signature: acceptedFiles[0] } );
+        // Loop through accepted files
     acceptedFiles.map(file => {
       // Initialize FileReader browser API
       const reader = new FileReader();
       // onload callback gets called after the reader reads the file data
       reader.onload = function(e) {
-        // add the image into the state. Since FileReader reading process is asynchronous, its better to get the latest snapshot state (i.e., prevState) and update it. 
-        setInputs( ...inputs, { signature: e.target.result } );
-        // console.log( e.target.result)
+        // add the image into the state. Since FileReader reading process is asynchronous, its better to get the latest snapshot state (i.e., prevState) and update it.
+        // console.log(e.target) 
+        // setInputs( { ...inputs, signature: e.target.result } );
+        setFile(e.target.result);
       };
+      
       // Read the file as Data URL (since we accept only images)
       reader.readAsDataURL(file);
-      // console.log(file)
+      // console.log(file) 
       return file;
     });
   }, []);
@@ -111,9 +101,11 @@ function SettingFunction() {
     const settingData = {
       data: {
         type: "settings",
-        attributes: { ...newSetting, sign_author: newSetting.sign_author, signature: newSetting.signature, },
+        attributes: { ...newSetting },
       },
     };
+
+    console.log(settingData)
 
     try {
       const response = await SettingService.create(settingData);
@@ -171,9 +163,9 @@ function SettingFunction() {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3} style={{  }}>
-        <MDBox>
-          <Grid container spacing={3}>
-              <Card>
+        <MDBox pb={3}>
+          <Grid container spacing={3} sm={12} md={12} lg={12}>
+              <Card sm={12} md={12} lg={12}>
                 <MDTypography variant="h3">
                   Ajouter un signataire 
                 </MDTypography>
@@ -186,7 +178,7 @@ function SettingFunction() {
                       {newSettingErrors}
                     </MDTypography>
                   )}
-                  <MDBox component="form" role="form" method="POST" onSubmit={submitHandler}>
+                  <MDBox component="form" role="form" method="POST" onSubmit={submitHandler} enctype="multipart/form-data">
                     <MDBox mb={2}>
                       <MDInput
                         type="text"
@@ -195,7 +187,7 @@ function SettingFunction() {
                         name="sign_author"
                         value={inputs.sign_author}
                         onChange={changeHandler}
-                        error={errors.signAuthorErrorError}
+                        error={errors.signAuthorError}
                       />
                     </MDBox>
                     <Grid container spacing={3}>
@@ -206,7 +198,7 @@ function SettingFunction() {
                       </Grid >
                       <Grid item xs={12} md={6} lg={6}>
                         <MDBox mb={2}>
-                          
+                         { file != "" ? <img src={file} alt="" style={{ width: "180px", height: "180px" }} /> : "" }
                         </MDBox>
                       </Grid >
                     </Grid>
@@ -222,43 +214,43 @@ function SettingFunction() {
         </MDBox>
         
         <Card>
-      <MDBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-        <MDBox>
-          <MDTypography variant="h6" gutterBottom>
-            Projects
-          </MDTypography>
-          <MDBox display="flex" alignItems="center" lineHeight={0}>
-            <Icon
-              sx={{
-                fontWeight: "bold",
-                color: ({ palette: { info } }) => info.main,
-                mt: -0.5,
-              }}
-            >
-              done
-            </Icon>
-            <MDTypography variant="button" fontWeight="regular" color="text">
-              &nbsp;<strong>30 done</strong> this month
-            </MDTypography>
+          <MDBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
+            <MDBox>
+              <MDTypography variant="h6" gutterBottom>
+                Projects
+              </MDTypography>
+              <MDBox display="flex" alignItems="center" lineHeight={0}>
+                <Icon
+                  sx={{
+                    fontWeight: "bold",
+                    color: ({ palette: { info } }) => info.main,
+                    mt: -0.5,
+                  }}
+                >
+                  done
+                </Icon>
+                <MDTypography variant="button" fontWeight="regular" color="text">
+                  &nbsp;<strong>30 done</strong> this month
+                </MDTypography>
+              </MDBox>
+            </MDBox>
+            <MDBox color="text" px={2}>
+              <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small" onClick={openMenu}>
+                more_vert
+              </Icon>
+            </MDBox>
+            {renderMenu}
           </MDBox>
-        </MDBox>
-        <MDBox color="text" px={2}>
-          <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small" onClick={openMenu}>
-            more_vert
-          </Icon>
-        </MDBox>
-        {renderMenu}
-      </MDBox>
-      <MDBox>
-        <DataTable
-          table={{ columns, rows }}
-          showTotalEntries={false}
-          isSorted={false}
-          noEndBorder
-          entriesPerPage={false}
-        />
-      </MDBox>
-    </Card>
+          <MDBox>
+            {/* <DataTable
+              table={{ columns, rows }}
+              showTotalEntries={false}
+              isSorted={false}
+              noEndBorder
+              entriesPerPage={false}
+            /> */}
+          </MDBox>
+        </Card>
        
         </MDBox>
       <Footer />
