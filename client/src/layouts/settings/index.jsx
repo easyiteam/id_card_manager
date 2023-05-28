@@ -48,11 +48,14 @@ function SettingFunction() {
   });
 
   const [file, setFile] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
 
   // IMAGE UPLOADING
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
   const onDrop = useCallback(acceptedFiles => {
-    console.log('', acceptedFiles[0])
-    setInputs( { ...inputs, signature: acceptedFiles[0] } );
+    setInputs({ ...inputs, signature: acceptedFiles[0] } );
         // Loop through accepted files
     acceptedFiles.map(file => {
       // Initialize FileReader browser API
@@ -60,14 +63,12 @@ function SettingFunction() {
       // onload callback gets called after the reader reads the file data
       reader.onload = function(e) {
         // add the image into the state. Since FileReader reading process is asynchronous, its better to get the latest snapshot state (i.e., prevState) and update it.
-        // console.log(e.target) 
         // setInputs( { ...inputs, signature: e.target.result } );
         setFile(e.target.result);
       };
       
       // Read the file as Data URL (since we accept only images)
       reader.readAsDataURL(file);
-      // console.log(file) 
       return file;
     });
   }, []);
@@ -97,20 +98,35 @@ function SettingFunction() {
 
     const newSetting = { sign_author: inputs.sign_author, signature: inputs.signature, };
     addNewSettingHandler(newSetting);
+    const formData = new FormData();
+    formData.append('file', inputs.signature);
+    formData.append('sign_author', inputs.sign_author);
+    formData.append('signature', inputs.signature);
+    console.log(formData)
 
     const settingData = {
       data: {
         type: "settings",
-        attributes: { ...newSetting },
+        attributes: { ...formData },
       },
     };
 
     console.log(settingData)
 
     try {
-      const response = await SettingService.create(settingData);
+      // const response = await SettingService.create(settingData);
       // authContext.login(response.access_token, response.refresh_token);
-      console.log(response)
+      // console.log(response)
+      await fetch(`${process.env.REACT_APP_API_URL}/setting/create`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': `application/vnd.api+json; multipart/form-data; boundary=---XYZ`,
+          "Accept": "application/vnd.api+json", 
+          'Access-Control-Allow-Credentials': true
+        },
+      });
+      console.log('File uploaded successfully!');
     } catch (res) {
       if (res.hasOwnProperty("message")) {
         setNewSettingError(res.message);
