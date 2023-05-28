@@ -548,7 +548,7 @@ function AddCard() {
          { typeCard === 2 ?
             <MDBox>
               <MDTypography variant="h4" gutterBottom mb={2} color="primary" style={{ marginBottom: "30px", textAlign: "center"}}>
-              CARTE PROFESSIONNELLE
+                CARTE PROFESSIONNELLE
               </MDTypography>
               <Grid container spacing={3} className="bigGrid">
                 <Grid className="leftGrid">
@@ -710,7 +710,7 @@ function AddCard() {
                       </MDBox>
                       <MDBox display="flex" justifyContent="center" alignItems="center" sx={{ height: "270px", width: "80%", border: "5px solid #E5E5E5", borderRadius: "10px", padding: "3%", marginLeft: "10%", marginRight: "10%"}}>
                         <MDBox mr={2} style={{ marginLeft: "0px", width: "150px", height: "270px",  overflow: "hidden"}}>
-                          <img src={imagePro.src} alt="" style={{ width: '150px', height: "210px", marginTop: "15px"}}  />
+                          <img src={imagePro.src} alt="" style={{ width: '148px', height: "210px", marginTop: "15px"}}  />
                           <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000", textAlign: "center" }}>
                             Mlle : {proInputs.matricule_number}
                           </MDTypography>
@@ -722,40 +722,46 @@ function AddCard() {
                           </MDTypography>
                         </MDBox>
                       </MDBox>
-                      <MDBox display="flex" justifyContent="center" alignItems="center" sx={{ height: "270px", width: "80%", padding: "3%", marginLeft: "10%", marginRight: "10%", marginTop: "-10px"}}>
-                        <MDBox>
-                          <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000"}}>
-                            Nom: 
-                          </MDTypography>
-                          <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000"}}>
-                            Prénom(s): 
-                          </MDTypography>
-                          <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000"}}>
-                            Date de naissance: 
-                          </MDTypography>
-                          <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000"}}>
-                            Lieu de naissance: 
-                          </MDTypography>
-                          <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000"}}>
-                            Groupe sanguin: 
-                          </MDTypography>
+                      <MDBox mt={2} sx={{ width: "80%", height: "400px", marginLeft: "13%", marginRight: "13%", overflow: "hidden"}} >
+                        <MDBox display="flex" mb={0.3} >
+                            <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden",}}>
+                              Nom: 
+                            </MDTypography>
+                            <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden", fontWeight: "400"}}>
+                              {proInputs.name != "" ? proInputs.name : ""}
+                            </MDTypography>
                         </MDBox>
-                        <MDBox ml={2}>
-                          <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000", fontWeight: "400"}}>
-                            {proInputs.name != "" ? proInputs.name : ""}
-                          </MDTypography>
-                          <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000", fontWeight: "400"}}>
-                            {proInputs.surname != "" ? proInputs.surname : ""}
-                          </MDTypography>
-                          <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000", fontWeight: "400"}}>
-                            {proInputs.bornDate}
-                          </MDTypography>
-                          <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000", fontWeight: "400"}}>
-                            {proInputs.bornPlace}
-                          </MDTypography>
-                          <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "red", fontWeight: "600"}}>
-                            {proInputs.bloodGroup}
-                          </MDTypography>
+                        <MDBox display="flex" mb={0.3} >
+                            <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden",}}>
+                              Prénom(s): 
+                            </MDTypography>
+                            <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden", fontWeight: "400"}}>
+                              {proInputs.surname != "" ? proInputs.surname : ""}
+                            </MDTypography>
+                        </MDBox>
+                        <MDBox display="flex" mb={0.3} >
+                            <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden",}}>
+                              Date de naissance: 
+                            </MDTypography>
+                            <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden", fontWeight: "400"}}>
+                              {proInputs.bornDate}
+                            </MDTypography>
+                        </MDBox>
+                        <MDBox display="flex" mb={0.3} >
+                            <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden",}}>
+                              Lieu de naissance:
+                            </MDTypography>
+                            <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden", fontWeight: "400"}}>
+                              {proInputs.bornPlace}
+                            </MDTypography>
+                        </MDBox>
+                        <MDBox display="flex" mb={0.3} >
+                            <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden",}}>
+                              Groupe sanguin:   
+                            </MDTypography>
+                            <MDTypography variant="h6" gutterBottom style={{ color: "red", width: "50%", overflow: "hidden", fontWeight: "600"}}>
+                              {proInputs.bloodGroup}
+                            </MDTypography>
                         </MDBox>
                       </MDBox>
                     </MDBox>
