@@ -63,6 +63,7 @@ const routes = [
     type: "examples",
     name: "Tableau de bord",
     key: "dashboard",
+    title: "Tableau de bord",
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
     component: <Dashboard />,

@@ -9,13 +9,15 @@ import path from 'path';
 
 const router = express.Router();
 
-const upload = multer({ dest: 'uploads/' }); // Le dossier de destination des fichiers uploadés
+const upload = multer({ dest: 'uploads/' });
 
-// router.post("/create", async (req, res, next) => {
-  router.post("/create", upload.single('signature'), async (req, res, next) => {
-  console.log(req)
+router.post("/create", upload.single('signature'), async (req, res, next) => {
+  const {sign_author, signature, } = req.body.data.attributes;
+
+  console.log(req.body.data.attributes.signature)
+
   const filePath = req.body.data.attributes.signature.path
-  // Par exemple, pour le déplacer vers un dossier "public/uploads" à la racine de votre projet :
+
   const __dirname = fs.realpathSync(".");
   const targetPath = path.join(__dirname, 'public/uploads', req.body.data.attributes.signature.filename);
   fs.rename(filePath, targetPath, (err) => {
@@ -26,7 +28,7 @@ const upload = multer({ dest: 'uploads/' }); // Le dossier de destination des fi
       res.sendStatus(200);
     }
   });
-  const {sign_author, signature, } = req.body.data.attributes;
+
   await createSettingRouteHandler(req, res, sign_author, signature,);
 });
 

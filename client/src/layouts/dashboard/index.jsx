@@ -44,7 +44,7 @@ function Dashboard() {
           </Grid>
         </MDBox>
       </MDBox>
-      <Footer />
+      <Footer style={{ position: "fixed", marginBottom: "200px" }} />
     </DashboardLayout>
   );
 }

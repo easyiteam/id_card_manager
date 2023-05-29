@@ -64,6 +64,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+  const routeTitle = useLocation().title;
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -142,19 +143,20 @@ function DashboardNavbar({ absolute, light, isMini }) {
     >
       <Toolbar sx={(theme) => navbarContainer(theme)}>
         <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
-          <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
+          <Breadcrumbs icon="home" title={""} route={route} light={light} />
+         { /* <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} /> */ }
         </MDBox>
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox pr={1}>
+            {/* <MDBox pr={1}>
               <MDInput label="Rechercher" />
-            </MDBox>
+            </MDBox>  */}
             <MDBox display="flex" alignItems="center" color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in/basic">
+              {/* <Link to="">
                 <IconButton sx={navbarIconButton} size="small" disableRipple>
                   <Icon sx={iconsStyle}>account_circle</Icon>
                 </IconButton>
-              </Link>
+              </Link> */}
               <IconButton
                 size="small"
                 disableRipple
@@ -191,11 +193,12 @@ function DashboardNavbar({ absolute, light, isMini }) {
               <MDBox>
                 <MDButton
                   variant="gradient"
-                  color="info"
+                  color="error"
                   fullWidth
                   type="button"
                   onClick={handleLogOut}
                 >
+                  <Icon>logout</Icon> &nbsp;
                   Se déconnecter
                 </MDButton>
               </MDBox>

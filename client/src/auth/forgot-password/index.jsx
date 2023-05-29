@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
@@ -121,6 +122,20 @@ function ForgotPassword() {
                 Valider
               </MDButton>
             </MDBox>
+          </MDBox>
+          <MDBox mt={3} mb={1} textAlign="center">
+            <MDTypography variant="button" color="text">
+              <MDTypography
+                component={Link}
+                to="/auth/login"
+                variant="button"
+                color="info"
+                fontWeight="medium"
+                textGradient
+              >
+                Se connecter
+              </MDTypography>
+            </MDTypography>
           </MDBox>
         </MDBox>
       </Card>

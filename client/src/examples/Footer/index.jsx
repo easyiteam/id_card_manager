@@ -50,6 +50,7 @@ function Footer({ company, links }) {
       justifyContent="space-between"
       alignItems="center"
       px={1.5}
+
     >
       <MDBox
         display="flex"

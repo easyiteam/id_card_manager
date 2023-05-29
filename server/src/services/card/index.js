@@ -3,7 +3,8 @@ import { cardModel } from "../../schemas/card.schema.js";
 
 dotenv.config();
 
-export const createCardRouteHandler = async (req, res, name, surname, gender, card_number, pv, pv_date, ) => {
+export const createCardRouteHandler = async (req, res, card_number, matricule_number, name, surname, gender, bornDate, bornPlace, bloodGroup, grade, pv, pv_date, sign_author, type, ) => {
+  console.log(card_number)
   // check if user already exists
   let foundCardByCardNum = await cardModel.findOne({ card_number: card_number });
   if (foundCardByCardNum) {
@@ -11,21 +12,48 @@ export const createCardRouteHandler = async (req, res, name, surname, gender, ca
     return res.status(400).json({ message: "Il existe déjà une carte créée avec ce numéro de carte." });
   }
 
-  let foundCardByPV = await cardModel.findOne({ card_number: card_number });
-  if (foundCardByPV) {
-    // does not get the error
-    return res.status(400).json({ message: "Il existe déjà une carte créée avec ce numéro de PV." });
-  }
+  let newCard;
 
-  const newCard = new cardModel({
-    name: name,
-    surname: surname,
-    gender: gender,
-    card_number: card_number,
-    pv: pv,
-    pv_date: pv_date,
-  });
-  await newCard.save();
+  if(pv) {
+      let foundCardByPV = await cardModel.findOne({ pv: pv });
+      if (foundCardByPV) {
+        // does not get the error
+        return res.status(400).json({ message: "Il existe déjà une carte créée avec ce numéro de PV." });
+      }
+
+      newCard = new cardModel({
+        name: name,
+        surname: surname,
+        gender: gender,
+        card_number: card_number,
+        pv: pv,
+        pv_date: pv_date,
+        type: type,
+      });
+      await newCard.save();
+
+  } else if(matricule_number) {
+      let foundCardByMatriculeNumber = await cardModel.findOne({ matricule_number: matricule_number });
+      if (foundCardByMatriculeNumber) {
+        // does not get the error
+        return res.status(400).json({ message: "Il existe déjà une carte créée avec ce numéro matricule." });
+      }
+
+      newCard = new cardModel({
+        name: name,
+        surname: surname,
+        gender: gender,
+        card_number: card_number,
+        matricule_number: matricule_number,
+        bornDate: bornDate,
+        bornPlace: bornPlace,
+        bloodGroup: bloodGroup,
+        grade: grade,
+        type: type,
+      });
+      await newCard.save();
+
+  }
 
   return res.status(200).json({
     card_number: newCard.card_number,

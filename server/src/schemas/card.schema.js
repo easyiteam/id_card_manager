@@ -9,11 +9,12 @@ const cardSchema = new mongoose.Schema({
   bornPlace: { required: false, type: String },
   bloodGroup: { required: false, type: String },
   grade: { required: false, type: String },
-  marticule_number: { required: false, type: String },
+  matricule_number: { required: false, type: String },
+  pv: { required: false, type: String },
   pv_date: { required: false, type: Date },
   sign_author: { required: false, type: Date },
   type: { required: true, type: String },
-  created_at: { type: Date },
+  created_at: { type: Date, default: Date.now() },
   updated_at: { type: Date },
 });
 

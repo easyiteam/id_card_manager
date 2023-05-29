@@ -6,8 +6,8 @@ import {
 const router = express.Router();
 
 router.post("/create", async (req, res, next) => {
-  const { name, surname, gender, card_number, pv, pv_date, } = req.body.data.attributes;
-  await createCardRouteHandler(req, res, name, surname, gender, card_number, pv, pv_date,);
+  const { card_number, matricule_number, name, surname, gender, bornDate, bornPlace, bloodGroup, grade, pv, pv_date, sign_author, type, } = req.body.data.attributes;
+  await createCardRouteHandler(req, res, card_number, matricule_number, name, surname, gender, bornDate, bornPlace, bloodGroup, grade, pv, pv_date, sign_author, type,);
 });
 
 // router.post("/logout", (req, res) => {

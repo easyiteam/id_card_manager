@@ -37,7 +37,7 @@ function SettingFunction() {
   const authContext = useContext(AuthContext);
 
   const { columns, rows } = data();
-  console.log(columns)
+//   console.log(columns)
 
   const [setting, setSetting] = useState({});
   const [newSettingErrors, setNewSettingError] = useState(null);
@@ -55,7 +55,8 @@ function SettingFunction() {
     setSelectedFile(event.target.files[0]);
   };
   const onDrop = useCallback(acceptedFiles => {
-    setInputs({ ...inputs, signature: acceptedFiles[0] } );
+    setInputs({ ...inputs, signature: acceptedFiles[0].mozFullPath } );
+    console.log(acceptedFiles[0].mozFullPath)
         // Loop through accepted files
     acceptedFiles.map(file => {
       // Initialize FileReader browser API
@@ -65,6 +66,7 @@ function SettingFunction() {
         // add the image into the state. Since FileReader reading process is asynchronous, its better to get the latest snapshot state (i.e., prevState) and update it.
         // setInputs( { ...inputs, signature: e.target.result } );
         setFile(e.target.result);
+
       };
       
       // Read the file as Data URL (since we accept only images)
@@ -102,31 +104,30 @@ function SettingFunction() {
     formData.append('file', inputs.signature);
     formData.append('sign_author', inputs.sign_author);
     formData.append('signature', inputs.signature);
-    console.log(formData)
+//     console.log(formData)
 
     const settingData = {
       data: {
         type: "settings",
-        attributes: { ...formData },
+        attributes: { ...newSetting },
       },
     };
 
-    console.log(settingData)
+//     console.log(settingData)
 
     try {
-      // const response = await SettingService.create(settingData);
+      const response = await SettingService.create(settingData);
       // authContext.login(response.access_token, response.refresh_token);
       // console.log(response)
-      await fetch(`${process.env.REACT_APP_API_URL}/setting/create`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': `application/vnd.api+json; multipart/form-data; boundary=---XYZ`,
-          "Accept": "application/vnd.api+json", 
-          'Access-Control-Allow-Credentials': true
-        },
-      });
-      console.log('File uploaded successfully!');
+//       await fetch(`${process.env.REACT_APP_API_URL}/setting/create`, {
+//         method: 'POST',
+//         body: "ilnze",
+//         headers: {
+//           'Content-Type': `application/json; multipart/form-data; boundary=---XYZ`,
+//           'Access-Control-Allow-Credentials': true
+//         },
+//       });
+//       console.log('Fichier téléversé avec succès!');
     } catch (res) {
       if (res.hasOwnProperty("message")) {
         setNewSettingError(res.message);
@@ -181,8 +182,8 @@ function SettingFunction() {
       <MDBox py={3} style={{  }}>
         <MDBox pb={3}>
           <Grid container spacing={3} sm={12} md={12} lg={12}>
-              <Card sm={12} md={12} lg={12}>
-                <MDTypography variant="h3">
+              <Card item sm={12} md={12} lg={12} >
+                <MDTypography variant="h3" pl={3} pt={2}>
                   Ajouter un signataire 
                 </MDTypography>
                 <MDBox justifyContent="space-between" alignItems="center" p={3}>
@@ -194,7 +195,7 @@ function SettingFunction() {
                       {newSettingErrors}
                     </MDTypography>
                   )}
-                  <MDBox component="form" role="form" method="POST" onSubmit={submitHandler} enctype="multipart/form-data">
+                  <MDBox component="form" role="form" method="POST" onSubmit={submitHandler} encType="multipart/form-data">
                     <MDBox mb={2}>
                       <MDInput
                         type="text"
@@ -233,9 +234,9 @@ function SettingFunction() {
           <MDBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
             <MDBox>
               <MDTypography variant="h6" gutterBottom>
-                Projects
+                Liste des signataires
               </MDTypography>
-              <MDBox display="flex" alignItems="center" lineHeight={0}>
+              {/* <MDBox display="flex" alignItems="center" lineHeight={0}>
                 <Icon
                   sx={{
                     fontWeight: "bold",
@@ -248,7 +249,7 @@ function SettingFunction() {
                 <MDTypography variant="button" fontWeight="regular" color="text">
                   &nbsp;<strong>30 done</strong> this month
                 </MDTypography>
-              </MDBox>
+              </MDBox> */}
             </MDBox>
             <MDBox color="text" px={2}>
               <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small" onClick={openMenu}>

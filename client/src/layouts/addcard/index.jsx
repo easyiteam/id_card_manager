@@ -67,6 +67,7 @@ function AddCard() {
   const [newCardErrors, setNewCardError] = useState(null);
 
   const currentYear = new Date().getFullYear();
+
   const yearToStr = currentYear.toString()
   const yearSplit = yearToStr.slice(-2);
 
@@ -191,7 +192,7 @@ function AddCard() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(e)
+//     console.log(e)
     
     if (inputs.name.trim().length < 3) {
       setErrors({ ...errors, nameError: true });
@@ -199,20 +200,20 @@ function AddCard() {
     }
 
     if(typeCard == 1) {
-      const newCard = { card_number: inputs.card_number, pv: inputs.pv, pv_date: inputs.pv_date, gender: inputs.gender, name: inputs.name, surname: inputs.surname, type: 1 };
+      const newCard = { card_number: inputs.card_number, pv: inputs.pv, pv_date: inputs.pv_date, gender: inputs.gender, name: inputs.name, surname: inputs.surname, type: "1" };
       addNewCardHandler(newCard);
       
       const cardData = {
         data: {
           type: "cards",
-          attributes: { ...newCard, card_number: newCard.card_number },
+          attributes: { ...newCard },
         },
       };
   
       try {
         const response = await CardService.create(cardData);
         // authContext.login(response.access_token, response.refresh_token);
-        console.log(response)
+//         console.log(response)
       } catch (res) {
         if (res.hasOwnProperty("message")) {
           setNewCardError(res.message);
@@ -223,20 +224,20 @@ function AddCard() {
 
     } else if(typeCard == 2) {
 
-      const newCard = { card_number:proInputs.card_number, matricule_number: proInputs.matricule_number, bornDate: proInputs.bornDate, bornPlace: proInputs.bornPlace, bloodGroup: proInputs.bloodGroup, name: inputs.name, surname: inputs.surname, grade: proInputs.grade, type: 2 };
+      const newCard = { card_number:proInputs.card_number, matricule_number: proInputs.matricule_number, bornDate: proInputs.bornDate, bornPlace: proInputs.bornPlace, bloodGroup: proInputs.bloodGroup, name: inputs.name, surname: inputs.surname, grade: proInputs.grade, type: "2" };
       addNewCardHandler(newCard);
       
       const cardData = {
         data: {
           type: "cards",
-          attributes: { ...newCard, card_number: newCard.card_number },
+          attributes: { ...newCard },
         },
       };
   
       try {
         const response = await CardService.create(cardData);
         // authContext.login(response.access_token, response.refresh_token);
-        console.log(response)
+//         console.log(response)
       } catch (res) {
         if (res.hasOwnProperty("message")) {
           setNewCardError(res.message);
@@ -311,8 +312,14 @@ function AddCard() {
   // }, []);
 
   const todayDate = new Date()
-  console.log(todayDate)
-  // todayDate.toLocaleDateString("fr")
+  const yyyy = todayDate.getFullYear();
+  let mm = todayDate.getMonth() + 1; // Months start at 0!
+  let dd = todayDate.getDate();
+
+  if (dd < 10) dd = '0' + dd;
+  if (mm < 10) mm = '0' + mm;
+
+  const formattedToday = dd + '/' + mm + '/' + yyyy;
 
   function formatDate(input) {
     let datePart = input.match(/\d+/g),
@@ -359,7 +366,7 @@ function AddCard() {
                         {newCardErrors}
                       </MDTypography>
                     )}
-                    <MDBox component="form" role="form" method="POST" onSubmit={submitHandler}>
+                    <MDBox component="form" role="form" method="POST" onSubmit={submitHandler} encType="multipart/form-data">
                       <MDBox mb={2}>
                         <FormControl fullWidth p={2}>
                           <InputLabel id="gender-label">Genre</InputLabel>
@@ -495,7 +502,7 @@ function AddCard() {
                     </MDBox>
                     <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" pt={5} pl={6.5} pr={6.5} pb={2}>
                       <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000" }}>
-                        Par arrêté <strong>PV N° {inputs.pv}</strong> du { inputs.pv_date != "" ? formatDate(inputs.pv_date) : ""}, { inputs.gender == "M" ? "Mr" : "Mme" } {inputs.name} {inputs.surname} a prêté serment prescrit par la loi devant le Tribunal Civil de Cotonou
+                        Par arrêté <strong>PV N° {inputs.pv}</strong> du { inputs.pv_date != "" ? formatDate(inputs.pv_date) : ""}, { inputs.gender == "M" ? "Mr" : inputs.gender == "F" ? "Mme" : "..." } {inputs.name} {inputs.name} {inputs.surname} a prêté serment prescrit par la loi devant le Tribunal Civil de Cotonou
                       </MDTypography>
                     </MDBox>
                   </MDBox>
@@ -517,7 +524,7 @@ function AddCard() {
                   </MDBox>
                   <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" pl={6.5} pr={6.5} pb={2}>
                     <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000" }}>
-                      Au nom du peuple béninois, Mr le Directeur Général des Douanes requiert toutes les autorités constituées civiles et militaires de prêter à { inputs.gender == "M" ? "Mr" : "Mme" } {inputs.name} {inputs.surname} aide, appui et protection dans tous ce qui se rattache à l’exercice des fonctions qui lui sont confiées.
+                      Au nom du peuple béninois, Mr le Directeur Général des Douanes requiert toutes les autorités constituées civiles et militaires de prêter à { inputs.gender == "M" ? "Mr" : inputs.gender == "F" ? "Mme" : "..." } {inputs.name} {inputs.surname} aide, appui et protection dans tous ce qui se rattache à l’exercice des fonctions qui lui sont confiées.
                     </MDTypography>
                   </MDBox>
                   <MDBox sx={{
@@ -529,7 +536,7 @@ function AddCard() {
                     }} >
                     <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center">
                       <MDTypography variant="h5" gutterBottom style={{ color: "#000", marginLeft: "20px", marginRight: "20px" }}>
-                        Fait à Cotonou, le 
+                        Fait à Cotonou, le { formattedToday }
                       </MDTypography>
                     </MDBox>
                     <MDBox style={{ }}>
@@ -537,7 +544,7 @@ function AddCard() {
                     </MDBox>
                     <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" marginBottom="25px">
                       <MDTypography variant="h5" gutterBottom style={{ color: "#000", marginLeft: "20px", marginRight: "20px" }}>
-                        Fait à Cotonou, le 
+                        Alain HINKATI
                       </MDTypography>
                     </MDBox>
                   </MDBox>
@@ -566,7 +573,7 @@ function AddCard() {
                           {newCardErrors}
                         </MDTypography>
                       )}
-                      <MDBox component="form" role="form" method="POST" onSubmit={submitHandler}>
+                      <MDBox component="form" role="form" method="POST" onSubmit={submitHandler} encType="multipart/form-data">
                         <MDBox mb={2}>
                           <MDInput
                             type="text"
@@ -792,7 +799,7 @@ function AddCard() {
                       Cette carte est strictement personnelle et incessible et tient aussi lieu de carte professionnelle. Contact d’urgence : 21 54 64 66
                       </MDTypography>
                     </MDBox>
-                    <MDBox sx={{
+                    <MDBox mt={2} sx={{
                         backgroundImage: `url(${bgCard})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
@@ -801,7 +808,7 @@ function AddCard() {
                       }} >
                       <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center">
                         <MDTypography variant="h5" gutterBottom style={{ color: "#000", marginLeft: "20px", marginRight: "20px" }}>
-                          Fait à Cotonou, le 
+                          Fait à Cotonou, le { formattedToday }
                         </MDTypography>
                       </MDBox>
                       <MDBox style={{ }}>
@@ -809,7 +816,7 @@ function AddCard() {
                       </MDBox>
                       <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" marginBottom="25px">
                         <MDTypography variant="h5" gutterBottom style={{ color: "#000", marginLeft: "20px", marginRight: "20px" }}>
-                          Fait à Cotonou, le 
+                          Alain HINKATI
                         </MDTypography>
                       </MDBox>
                     </MDBox>

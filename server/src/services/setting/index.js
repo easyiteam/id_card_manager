@@ -12,31 +12,16 @@ export const createSettingRouteHandler = async (req, res, sign_author, signature
     return res.status(400).json({ message: "Il existe déjà un paramètre enregistré sous ce nom." });
   }
 
-  // console.log(signature)
+  const newSetting = new settingModel({
+    sign_author: sign_author,
+    signature: signature,
+  });
+  await newSetting.save();
 
-  // const __dirname = fs.realpathSync(".");
-  // const newpath = __dirname + "/files/";
-  // const file = signature.file;
-  // const filename = signature.name; 
-  
- 
-  // signature.mv(`${newpath}${filename}`, (err) => {
-  //   if (err) {
-  //     res.status(500).send({ message: "File upload failed", code: 200 });
-  //   }
-  //   res.status(200).send({ message: "File Uploaded", code: 200 });
-  // });
-
-  // const newSetting = new settingModel({
-  //   sign_author: sign_author,
-  //   signature: signature,
-  // });
-  // await newSetting.save();
-
-  // return res.status(200).json({
-  //   sign_author: newSetting.sign_author,
-  //   signature: newSetting.signature,
-  // });
+  return res.status(200).json({
+    sign_author: newSetting.sign_author,
+    signature: newSetting.signature,
+  });
 };
 
 export const showAllSettingsRouteHandler = async (req, res) => {
