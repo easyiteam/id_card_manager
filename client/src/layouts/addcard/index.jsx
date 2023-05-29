@@ -56,7 +56,7 @@ import 'react-html5-camera-photo/build/css/index.css';
 import { inputAdornmentClasses } from "@mui/material";
 import axios from "axios";
 
-async function AddCard() {
+function AddCard() {
   
   const authContext = useContext(AuthContext);
   const navigate = useNavigate();
@@ -68,7 +68,7 @@ async function AddCard() {
   const [newCardProErrors, setNewCardProError] = useState(null);
   const [allSignAuthors, setSignAuthors] = useState([]);
 
-  const allSign = await axios.get(`${process.env.REACT_APP_API_URL}/setting/getAll`)
+  const allSign = axios.get(`${process.env.REACT_APP_API_URL}/setting/getAll`)
                     .then((response) => {
                       setSignAuthors(response.data)
                     });
@@ -111,6 +111,9 @@ async function AddCard() {
   const [signAuthor, setAuthCom] = useState([]);
   const [signPhoto, setPhotoCom] = useState([]);
 
+  const [signProAuthor, setAuthProCom] = useState([]);
+  const [signProPhoto, setPhotoProCom] = useState([]);
+
   const handleChangeGender = (event) => {
     setInputs({ ...inputs, gender: event.target.value });
   };
@@ -122,6 +125,16 @@ async function AddCard() {
         setAuthCom(response.data.sign_author);
         const filePath = response.data.signature.substring(response.data.signature.lastIndexOf(''), 9);
         setPhotoCom(filePath);
+      });
+  };
+    
+  const handleChangeSignAuthorPro = async (event) => {
+    setProInputs({  ...proInputs, sign_author: event.target.value });
+    await axios.post(`${process.env.REACT_APP_API_URL}/setting/getASetting`, { signId: event.target.value })
+      .then((response) => {
+        setAuthProCom(response.data.sign_author);
+        const filePathpro = response.data.signature.substring(response.data.signature.lastIndexOf(''), 9);
+        setPhotoProCom(filePathpro);
       });
   };
     
@@ -137,11 +150,11 @@ async function AddCard() {
   // Create a state called images using useState hooks and pass the initial value as empty array
   const [image, setImage] = useState([]);
   const [imagePro, setProImage] = useState([]);
-  const [imageSign, setSignImage] = useState([]);
-  const [imageProSign, setProSignImage] = useState([]);
+  const [imageCard, setCardImage] = useState([]);
+  const [imageProCard, setProCardImage] = useState([]);
 
   const onDrop = useCallback(acceptedFiles => {
-    setSignImage(acceptedFiles[0]);
+    setCardImage(acceptedFiles[0]);
     // Loop through accepted files
     acceptedFiles.map(file => {
       // Initialize FileReader browser API
@@ -160,7 +173,7 @@ async function AddCard() {
   }, []);
   
   const onDropPro = useCallback(acceptedFiles => {
-    setProSignImage(acceptedFiles[0]);
+    setProCardImage(acceptedFiles[0]);
     // Loop through accepted files
     acceptedFiles.map(file => {
       // Initialize FileReader browser API
@@ -257,7 +270,7 @@ async function AddCard() {
       formData.append('name', inputs.name);
       formData.append('surname', inputs.surname);
       formData.append('sign_author', inputs.sign_author);
-      formData.append('photo', imageSign);
+      formData.append('photo', imageCard);
       formData.append('type', "1");
   
       try {
@@ -324,7 +337,7 @@ async function AddCard() {
       formDataN.append('bornPlace', proInputs.bornPlace);
       formDataN.append('bloodGroup', proInputs.bloodGroup);
       formDataN.append('sign_author', proInputs.sign_author);
-      formDataN.append('photo', proInputs.photo);
+      formDataN.append('photo', imageProCard);
       formDataN.append('type', "2");
   
       try {
@@ -799,6 +812,27 @@ async function AddCard() {
                             required
                           />
                         </MDBox>
+                        <MDBox mb={2}>
+                          <FormControl fullWidth required >
+                            <InputLabel id="sign-label-pro">Signataire</InputLabel>
+                            <Select
+                              labelId="sign-label-pro"
+                              id="sign_author_pro"
+                              value={proInputs.sign_author}
+                              label="Signataire"
+                              style={{ padding: "10px"}}
+                              onChange={handleChangeSignAuthorPro}
+                              fullWidth
+                              required
+                            >
+                            {
+                              allSignAuthors.map((setting) =>
+                                <MenuItem key={setting.id} value={setting._id} >{setting.sign_author}</MenuItem>
+                              )
+                            }
+                            </Select>
+                          </FormControl>
+                        </MDBox>
                         <Grid container spacing={3}>
                           <Grid item xs={12} md={6} lg={6}>
                             <MDBox mb={2}>
@@ -953,11 +987,11 @@ async function AddCard() {
                         </MDTypography>
                       </MDBox>
                       <MDBox style={{ }}>
-                        <img src={logoSecondFace} alt="Logo entreprise" style={{ width: "200px", height: "200px", marginLeft: "100px", marginRight: "100px" }} />
+                        <img src={ signProPhoto } alt="Logo entreprise" style={{ width: "200px", height: "200px", marginLeft: "100px", marginRight: "100px" }} />
                       </MDBox>
                       <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" marginBottom="25px">
                         <MDTypography variant="h5" gutterBottom style={{ color: "#000", marginLeft: "20px", marginRight: "20px" }}>
-                          Alain HINKATI
+                          { signProAuthor }
                         </MDTypography>
                       </MDBox>
                     </MDBox>

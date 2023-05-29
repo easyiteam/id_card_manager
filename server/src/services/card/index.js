@@ -58,7 +58,6 @@ export const createCardProRouteHandler = async (req, res, card_number, matricule
   newCard = new cardModel({
     name: name,
     surname: surname,
-    gender: gender,
     card_number: card_number,
     matricule_number: matricule_number,
     bornDate: bornDate,

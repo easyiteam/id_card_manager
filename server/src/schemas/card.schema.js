@@ -12,7 +12,7 @@ const cardSchema = new mongoose.Schema({
   matricule_number: { required: false, type: String },
   pv: { required: false, type: String },
   pv_date: { required: false, type: String },
-  sign_author: { type: [mongoose.Schema.Types.ObjectId], required: false, ref: 'Setting' },
+  sign_author: { type: mongoose.Schema.Types.ObjectId, required: false, ref: 'Setting' },
   photo: { required: true, type: String },
   type: { required: true, type: String },
   created_at: { type: Date, default: Date.now() },
