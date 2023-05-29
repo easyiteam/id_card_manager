@@ -43,14 +43,12 @@ const AuthContextProvider = ({ children }) => {
 
   const token = localStorage.getItem("token");
 
-  // console.log(token)
   useEffect(() => {
     const tokenA = localStorage.getItem("token");
 
     if (!tokenA) {
       return
     }else {
-      console.log(tokenA)
 
       setIsAuthenticated(true);
       if (location.pathname === '/auth/login') {
@@ -67,7 +65,6 @@ const AuthContextProvider = ({ children }) => {
     if (!tokenB) {
       return
     }else {
-      console.log(location)
 
       setIsAuthenticated(isAuthenticated);
       if (location.pathname == '/auth/login' || location.pathname == '/auth/register') {

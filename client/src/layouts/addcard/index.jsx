@@ -21,6 +21,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import './styles.css';
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useCallback, useContext, useLayoutEffect, useRef, useState } from "react";
 
@@ -50,21 +51,27 @@ import logoSecondFace from "@/assets/images/logo_second_face.png";
 // Import the dropzone component
 import Dropzone from "./data/Dropzone";
 
-// cuid is a simple library to generate unique IDs
-import cuid from "cuid";
-
 import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 import { inputAdornmentClasses } from "@mui/material";
+import axios from "axios";
 
-function AddCard() {
+async function AddCard() {
   
   const authContext = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [typeCard, setTypeCard] = useState(0);
 
   const [card, setCard] = useState({});
   const [newCardErrors, setNewCardError] = useState(null);
+  const [newCardProErrors, setNewCardProError] = useState(null);
+  const [allSignAuthors, setSignAuthors] = useState([]);
+
+  const allSign = await axios.get(`${process.env.REACT_APP_API_URL}/setting/getAll`)
+                    .then((response) => {
+                      setSignAuthors(response.data)
+                    });
 
   const currentYear = new Date().getFullYear();
 
@@ -83,6 +90,7 @@ function AddCard() {
     name: "",
     surname: "",
     sign_author: "",
+    photo: "",
     type: 1
   });
   
@@ -96,11 +104,25 @@ function AddCard() {
     bornPlace: "",
     bloodGroup: "",
     sign_author: "",
+    photo: "",
     type: 2
   });
 
+  const [signAuthor, setAuthCom] = useState([]);
+  const [signPhoto, setPhotoCom] = useState([]);
+
   const handleChangeGender = (event) => {
     setInputs({ ...inputs, gender: event.target.value });
+  };
+
+  const handleChangeSignAuthor = async (event) => {
+    setInputs({  ...inputs, sign_author: event.target.value });
+    await axios.post(`${process.env.REACT_APP_API_URL}/setting/getASetting`, {signId: event.target.value})
+      .then((response) => {
+        setAuthCom(response.data.sign_author);
+        const filePath = response.data.signature.substring(response.data.signature.lastIndexOf(''), 9);
+        setPhotoCom(filePath);
+      });
   };
     
   const handleComCard = () => {
@@ -115,9 +137,11 @@ function AddCard() {
   // Create a state called images using useState hooks and pass the initial value as empty array
   const [image, setImage] = useState([]);
   const [imagePro, setProImage] = useState([]);
+  const [imageSign, setSignImage] = useState([]);
+  const [imageProSign, setProSignImage] = useState([]);
 
   const onDrop = useCallback(acceptedFiles => {
-    // console.log('gogo', acceptedFiles)
+    setSignImage(acceptedFiles[0]);
     // Loop through accepted files
     acceptedFiles.map(file => {
       // Initialize FileReader browser API
@@ -136,7 +160,7 @@ function AddCard() {
   }, []);
   
   const onDropPro = useCallback(acceptedFiles => {
-    // console.log('gogo', acceptedFiles)
+    setProSignImage(acceptedFiles[0]);
     // Loop through accepted files
     acceptedFiles.map(file => {
       // Initialize FileReader browser API
@@ -145,7 +169,6 @@ function AddCard() {
       reader.onload = function(e) {
         // add the image into the state. Since FileReader reading process is asynchronous, its better to get the latest snapshot state (i.e., prevState) and update it. 
         setProImage({ src: e.target.result });
-        // console.log( e.target.result)
       };
       // Read the file as Data URL (since we accept only images)
       reader.readAsDataURL(file);
@@ -161,6 +184,8 @@ function AddCard() {
     nameError: false,
     surnameError: false,
     genderError: false,
+    signAuthorError: false,
+    photoError: false,
   });
   
   const [errorPros, setProErrors] = useState({
@@ -172,9 +197,9 @@ function AddCard() {
     surnameError: false,
     gradeError: false,
     bloodGroupError: false,
+    signAuthorError: false,
+    photoError: false,
   });
-
-  const addNewCardHandler = (newCard) => setCard(newCard);
 
   const changeHandler = (e) => {
     setInputs({
@@ -190,30 +215,83 @@ function AddCard() {
     });
   };
 
+  const todayDate = new Date()
+  const yyyy = todayDate.getFullYear();
+  let mm = todayDate.getMonth() + 1; // Months start at 0!
+  let dd = todayDate.getDate();
+
+  if (dd < 10) dd = '0' + dd;
+  if (mm < 10) mm = '0' + mm;
+
+  const formattedToday = dd + '/' + mm + '/' + yyyy;
+
+  function formatDate(input) {
+    let datePart = input.match(/\d+/g),
+    year = datePart[0].substring(0), // get only two digits
+    month = datePart[1], day = datePart[2];
+
+    return day+'/'+month+'/'+year;
+  }
+
   const submitHandler = async (e) => {
     e.preventDefault();
-//     console.log(e)
-    
-    if (inputs.name.trim().length < 3) {
-      setErrors({ ...errors, nameError: true });
-      return;
-    }
 
     if(typeCard == 1) {
-      const newCard = { card_number: inputs.card_number, pv: inputs.pv, pv_date: inputs.pv_date, gender: inputs.gender, name: inputs.name, surname: inputs.surname, type: "1" };
-      addNewCardHandler(newCard);
-      
-      const cardData = {
-        data: {
-          type: "cards",
-          attributes: { ...newCard },
-        },
-      };
+
+      if (inputs.name.trim().length < 3) {
+        setErrors({ ...errors, nameError: true });
+        setNewCardError("Le nom doit contenir au moins 3 caractères");
+        return;
+      }
+
+      if (inputs.surname.trim().length < 3) {
+        setErrors({ ...errors, surnameError: true });
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('card_number', inputs.card_number);
+      formData.append('pv', inputs.pv);
+      formData.append('pv_date', formatDate(inputs.pv_date));
+      formData.append('gender', inputs.gender);
+      formData.append('name', inputs.name);
+      formData.append('surname', inputs.surname);
+      formData.append('sign_author', inputs.sign_author);
+      formData.append('photo', imageSign);
+      formData.append('type', "1");
   
       try {
-        const response = await CardService.create(cardData);
-        // authContext.login(response.access_token, response.refresh_token);
-//         console.log(response)
+        await axios.post(`${process.env.REACT_APP_API_URL}/card/create`, formData)
+              .then((response) => {
+                console.log(response.data)
+                if(!response.data.errors) {
+                  setInputs({
+                    card_number: "",
+                    pv: "",
+                    pv_date: "",
+                    name: "",
+                    surname: "",
+                    gender: "",
+                    sign_author: "",
+                    photo: ""
+                  });
+            
+                  setErrors({
+                    cardNumberError: false,
+                    pvError: false,
+                    pvDateError: false,
+                    nameError: false,
+                    surnameError: false,
+                    genderError: false,
+                    signAuthorError: false,
+                  });
+                  navigate("/dashboard");
+                  
+                }
+              })
+              .catch((err) => {
+                console.log(err)
+              });
       } catch (res) {
         if (res.hasOwnProperty("message")) {
           setNewCardError(res.message);
@@ -224,25 +302,72 @@ function AddCard() {
 
     } else if(typeCard == 2) {
 
-      const newCard = { card_number:proInputs.card_number, matricule_number: proInputs.matricule_number, bornDate: proInputs.bornDate, bornPlace: proInputs.bornPlace, bloodGroup: proInputs.bloodGroup, name: inputs.name, surname: inputs.surname, grade: proInputs.grade, type: "2" };
-      addNewCardHandler(newCard);
-      
-      const cardData = {
-        data: {
-          type: "cards",
-          attributes: { ...newCard },
-        },
-      };
+      if (proInputs.name.trim().length < 3) {
+        setErrors({ ...errorPros, nameError: true });
+        setNewCardProError("Le nom doit contenir au moins 3 caractères");
+        return;
+      }
+
+      if (proInputs.surname.trim().length < 3) {
+        setErrors({ ...errorPros, surnameError: true });
+        setNewCardProError("Le champ prénoms doit contenir au moins 3 caractères");
+        return;
+      }
+
+      const formDataN = new FormData();
+      formDataN.append('card_number', proInputs.card_number);
+      formDataN.append('matricule_number', proInputs.matricule_number);
+      formDataN.append('name', proInputs.name);
+      formDataN.append('surname', proInputs.surname);
+      formDataN.append('grade', proInputs.grade);
+      formDataN.append('bornDate', formatDate(proInputs.bornDate));
+      formDataN.append('bornPlace', proInputs.bornPlace);
+      formDataN.append('bloodGroup', proInputs.bloodGroup);
+      formDataN.append('sign_author', proInputs.sign_author);
+      formDataN.append('photo', proInputs.photo);
+      formDataN.append('type', "2");
   
       try {
-        const response = await CardService.create(cardData);
-        // authContext.login(response.access_token, response.refresh_token);
-//         console.log(response)
+        await axios.post(`${process.env.REACT_APP_API_URL}/card/createpro`, formDataN)
+              .then((response) => {
+                console.log(response.data)
+                if(!response.data.errors) {
+                  setProInputs({
+                    card_number: "",
+                    matricule_number: "",
+                    name: "",
+                    surname: "",
+                    grade: "",
+                    bornDate: "",
+                    bornPlace: "",
+                    bloodGroup: "",
+                    sign_author: "",
+                    photo: "",
+                  });
+            
+                  setProErrors({
+                    cardNumberError: false,
+                    marticuleNumberError: false,
+                    bornDateError: false,
+                    bornPlaceError: false,
+                    nameError: false,
+                    surnameError: false,
+                    gradeError: false,
+                    bloodGroupError: false,
+                    signAuthorError: false,
+                  });
+                  navigate("/dashboard");
+                  
+                }
+              })
+              .catch((err) => {
+                console.log(err)
+              });
       } catch (res) {
         if (res.hasOwnProperty("message")) {
-          setNewCardError(res.message);
+          setNewCardProError(res.message);
         } else {
-          setNewCardError(res.errors[0].detail);
+          setNewCardProError(res.errors[0].detail);
         }
       }
     }
@@ -308,26 +433,8 @@ function AddCard() {
   //     }
   //   };
   //   window.addEventListener("scroll", onScroll);
-  //   return () => window.removeEventListener("scroll", onScroll);
+  //   return () => windowNaNpxoveEventListener("scroll", onScroll);
   // }, []);
-
-  const todayDate = new Date()
-  const yyyy = todayDate.getFullYear();
-  let mm = todayDate.getMonth() + 1; // Months start at 0!
-  let dd = todayDate.getDate();
-
-  if (dd < 10) dd = '0' + dd;
-  if (mm < 10) mm = '0' + mm;
-
-  const formattedToday = dd + '/' + mm + '/' + yyyy;
-
-  function formatDate(input) {
-    let datePart = input.match(/\d+/g),
-    year = datePart[0].substring(0), // get only two digits
-    month = datePart[1], day = datePart[2];
-
-    return day+'/'+month+'/'+year;
-  }
 
   return (
     <DashboardLayout>
@@ -368,15 +475,17 @@ function AddCard() {
                     )}
                     <MDBox component="form" role="form" method="POST" onSubmit={submitHandler} encType="multipart/form-data">
                       <MDBox mb={2}>
-                        <FormControl fullWidth p={2}>
+                        <FormControl fullWidth required >
                           <InputLabel id="gender-label">Genre</InputLabel>
                           <Select
                             labelId="gender-label"
                             id="gender"
                             value={inputs.gender}
                             label="Genre"
-                            p={2}
+                            style={{ padding: "10px"}}
                             onChange={handleChangeGender}
+                            fullWidth
+                            required
                           >
                             <MenuItem value="F">Femme</MenuItem>
                             <MenuItem value="M">Homme</MenuItem>
@@ -388,12 +497,13 @@ function AddCard() {
                           <MDBox mb={2}>
                             <MDInput
                               type="text"
-                              label="PV N*"
+                              label="PV N"
                               fullWidth
                               value={inputs.pv}
                               name="pv"
                               onChange={changeHandler}
                               error={errors.pvError}
+                              required
                             />
                           </MDBox>
                         </Grid >
@@ -402,12 +512,13 @@ function AddCard() {
                           <MDBox mb={2}>
                             <MDInput
                               type="date"
-                              label="Date PV*"
+                              label="Date PV"
                               fullWidth
                               value={inputs.pv_date}
                               name="pv_date"
                               onChange={changeHandler}
                               error={errors.pvDateError}
+                              required
                             />
                           </MDBox>
                         </Grid >
@@ -415,29 +526,52 @@ function AddCard() {
                       <MDBox mb={2}>
                         <MDInput
                           type="text"
-                          label="Nom*"
+                          label="Nom"
                           fullWidth
                           name="name"
                           value={inputs.name}
                           onChange={changeHandler}
                           error={errors.nameError}
+                          required
                         />
                       </MDBox>
                       <MDBox mb={2}>
                         <MDInput
                           type="text"
-                          label="Prénoms*"
+                          label="Prénoms"
                           fullWidth
                           name="surname"
                           value={inputs.surname}
                           onChange={changeHandler}
                           error={errors.surnameError}
+                          required
                         />
+                      </MDBox>
+                      <MDBox mb={2}>
+                        <FormControl fullWidth required >
+                          <InputLabel id="sign-label">Signataire</InputLabel>
+                          <Select
+                            labelId="sign-label"
+                            id="sign_author"
+                            value={inputs.sign_author}
+                            label="Signataire"
+                            style={{ padding: "10px"}}
+                            onChange={handleChangeSignAuthor}
+                            fullWidth
+                            required
+                          >
+                          {
+                            allSignAuthors.map((setting) =>
+                              <MenuItem key={setting.id} value={setting._id} >{setting.sign_author}</MenuItem>
+                            )
+                          }
+                          </Select>
+                        </FormControl>
                       </MDBox>
                       <Grid container spacing={3}>
                         <Grid item xs={12} md={6} lg={6}>
                           <MDBox mb={2}>
-                            <Dropzone onDrop={onDrop} accept={"image/*"} />
+                            <Dropzone onDrop={onDrop} accept={"image/*"} required />
                             {/* <UploadDropzone uploader={uploader}
                                           options={uploadOptions}
                                           onUpdate={files => alert(files.map(x => x.fileUrl).join("\n"))}
@@ -502,7 +636,7 @@ function AddCard() {
                     </MDBox>
                     <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" pt={5} pl={6.5} pr={6.5} pb={2}>
                       <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000" }}>
-                        Par arrêté <strong>PV N° {inputs.pv}</strong> du { inputs.pv_date != "" ? formatDate(inputs.pv_date) : ""}, { inputs.gender == "M" ? "Mr" : inputs.gender == "F" ? "Mme" : "..." } {inputs.name} {inputs.name} {inputs.surname} a prêté serment prescrit par la loi devant le Tribunal Civil de Cotonou
+                        Par arrêté <strong>PV N° {inputs.pv != "" ? inputs.pv : "..."}</strong> du { inputs.pv_date != "" ? formatDate(inputs.pv_date) : "..."}, { inputs.gender == "M" ? "Mr" : inputs.gender == "F" ? "Mme" : "..." } {inputs.name != "" ? inputs.name : "..."} {inputs.surname != "" ? inputs.surname : "..."} a prêté serment prescrit par la loi devant le Tribunal Civil de Cotonou
                       </MDTypography>
                     </MDBox>
                   </MDBox>
@@ -524,7 +658,7 @@ function AddCard() {
                   </MDBox>
                   <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" pl={6.5} pr={6.5} pb={2}>
                     <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000" }}>
-                      Au nom du peuple béninois, Mr le Directeur Général des Douanes requiert toutes les autorités constituées civiles et militaires de prêter à { inputs.gender == "M" ? "Mr" : inputs.gender == "F" ? "Mme" : "..." } {inputs.name} {inputs.surname} aide, appui et protection dans tous ce qui se rattache à l’exercice des fonctions qui lui sont confiées.
+                      Au nom du peuple béninois, Mr le Directeur Général des Douanes requiert toutes les autorités constituées civiles et militaires de prêter à { inputs.gender == "M" ? "Mr" : inputs.gender == "F" ? "Mme" : "..." } {inputs.name != "" ? inputs.name : "..."} {inputs.surname != "" ? inputs.surname : "..."} aide, appui et protection dans tous ce qui se rattache à l’exercice des fonctions qui lui sont confiées.
                     </MDTypography>
                   </MDBox>
                   <MDBox sx={{
@@ -540,11 +674,11 @@ function AddCard() {
                       </MDTypography>
                     </MDBox>
                     <MDBox style={{ }}>
-                      <img src={logoSecondFace} alt="Logo entreprise" style={{ width: "200px", height: "200px", marginLeft: "100px", marginRight: "100px" }} />
+                      <img src={ signPhoto } alt="Logo entreprise" style={{ width: "200px", height: "200px", marginLeft: "100px", marginRight: "100px" }} />
                     </MDBox>
                     <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" marginBottom="25px">
                       <MDTypography variant="h5" gutterBottom style={{ color: "#000", marginLeft: "20px", marginRight: "20px" }}>
-                        Alain HINKATI
+                        { signAuthor }
                       </MDTypography>
                     </MDBox>
                   </MDBox>
@@ -568,43 +702,46 @@ function AddCard() {
                       <MDTypography variant="h6" gutterBottom mb={2} color="error">
                         Tous les champs sont obligatoires (*)
                       </MDTypography>
-                      {newCardErrors && (
+                      {newCardProErrors && (
                         <MDTypography variant="caption" color="error" fontWeight="light" pt={2}>
-                          {newCardErrors}
+                          {newCardProErrors}
                         </MDTypography>
                       )}
                       <MDBox component="form" role="form" method="POST" onSubmit={submitHandler} encType="multipart/form-data">
                         <MDBox mb={2}>
                           <MDInput
                             type="text"
-                            label="N matricule*"
+                            label="N matricule"
                             fullWidth
                             value={proInputs.matricule_number}
                             name="matricule_number"
                             onChange={changeProHandler}
                             error={errorPros.marticuleNumberError}
+                            required
                           />
                         </MDBox>
                         <MDBox mb={2}>
                           <MDInput
                             type="text"
-                            label="Nom*"
+                            label="Nom"
                             fullWidth
                             name="name"
                             value={proInputs.name}
                             onChange={changeProHandler}
                             error={errorPros.nameError}
+                            required
                           />
                         </MDBox>
                         <MDBox mb={2}>
                           <MDInput
                             type="text"
-                            label="Prénoms*"
+                            label="Prénoms"
                             fullWidth
                             name="surname"
                             value={proInputs.surname}
                             onChange={changeProHandler}
                             error={errorPros.surnameError}
+                            required
                           />
                         </MDBox>
                         <Grid container spacing={3}>
@@ -612,12 +749,13 @@ function AddCard() {
                             <MDBox mb={2}>
                               <MDInput
                                 type="date"
-                                label="Date de naissance*"
+                                label="Date de naissance"
                                 fullWidth
                                 value={proInputs.bornDate}
                                 name="bornDate"
                                 onChange={changeProHandler}
                                 error={errorPros.bornDateError}
+                                required
                               />
                             </MDBox>
                           </Grid >
@@ -626,12 +764,13 @@ function AddCard() {
                             <MDBox mb={2}>
                               <MDInput
                                 type="text"
-                                label="Lieu de naissance*"
+                                label="Lieu de naissance"
                                 fullWidth
                                 value={proInputs.bornPlace}
                                 name="bornPlace"
                                 onChange={changeProHandler}
                                 error={errorPros.bornPlaceError}
+                                required
                               />
                             </MDBox>
                           </Grid >
@@ -639,29 +778,31 @@ function AddCard() {
                         <MDBox mb={2}>
                           <MDInput
                             type="text"
-                            label="Grade*"
+                            label="Grade"
                             fullWidth
                             name="grade"
                             value={proInputs.grade}
                             onChange={changeProHandler}
                             error={errorPros.gradeError}
+                            required
                           />
                         </MDBox>
                         <MDBox mb={2}>
                           <MDInput
                             type="text"
-                            label="Groupe sanguin*"
+                            label="Groupe sanguin"
                             fullWidth
                             name="bloodGroup"
                             value={proInputs.bloodGroup}
                             onChange={changeProHandler}
                             error={errorPros.bloodGroupError}
+                            required
                           />
                         </MDBox>
                         <Grid container spacing={3}>
                           <Grid item xs={12} md={6} lg={6}>
                             <MDBox mb={2}>
-                              <Dropzone onDrop={onDropPro} accept={"image/*"} />
+                              <Dropzone onDrop={onDropPro} accept={"image/*"} required />
                               {/* <UploadDropzone uploader={uploader}
                                             options={uploadOptions}
                                             onUpdate={files => alert(files.map(x => x.fileUrl).join("\n"))}
@@ -741,7 +882,7 @@ function AddCard() {
                               Nom: 
                             </MDTypography>
                             <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden", fontWeight: "400"}}>
-                              {proInputs.name != "" ? proInputs.name : ""}
+                              {proInputs.name != "" ? proInputs.name : "..."}
                             </MDTypography>
                         </MDBox>
                         <MDBox display="flex" mb={0.3} >
@@ -749,7 +890,7 @@ function AddCard() {
                               Prénom(s): 
                             </MDTypography>
                             <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden", fontWeight: "400"}}>
-                              {proInputs.surname != "" ? proInputs.surname : ""}
+                              {proInputs.surname != "" ? proInputs.surname : "..."}
                             </MDTypography>
                         </MDBox>
                         <MDBox display="flex" mb={0.3} >
@@ -757,7 +898,7 @@ function AddCard() {
                               Date de naissance: 
                             </MDTypography>
                             <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden", fontWeight: "400"}}>
-                              { proInputs.bornDate != "" ? formatDate(proInputs.bornDate) : "" }
+                              { proInputs.bornDate != "" ? formatDate(proInputs.bornDate) : "..." }
                             </MDTypography>
                         </MDBox>
                         <MDBox display="flex" mb={0.3} >
@@ -765,7 +906,7 @@ function AddCard() {
                               Lieu de naissance:
                             </MDTypography>
                             <MDTypography variant="h6" gutterBottom style={{ color: "#000", width: "50%", overflow: "hidden", fontWeight: "400"}}>
-                              {proInputs.bornPlace}
+                              {proInputs.bornPlace != "" ? proInputs.bornPlace : "..."}
                             </MDTypography>
                         </MDBox>
                         <MDBox display="flex" mb={0.3} >
@@ -773,7 +914,7 @@ function AddCard() {
                               Groupe sanguin:   
                             </MDTypography>
                             <MDTypography variant="h6" gutterBottom style={{ color: "red", width: "50%", overflow: "hidden", fontWeight: "600"}}>
-                              {proInputs.bloodGroup}
+                              {proInputs.bloodGroup != "" ? proInputs.bloodGroup : "..."}
                             </MDTypography>
                         </MDBox>
                       </MDBox>

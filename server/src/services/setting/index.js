@@ -28,20 +28,26 @@ export const showAllSettingsRouteHandler = async (req, res) => {
 
   const allSettings = await settingModel.find();
 
-  const sentData = {
-    data: {
-      type: 'settings',
-      attributes: {
-        sign_author: allSettings.sign_author,
-        signature: allSettings.signature,
-        createdAt: allSettings.createdAt,
-        updateAt: allSettings.updateAt
-      },
-      links: {
-        self: `${process.env.APP_URL_API}/settings`
-      }
-    }
-  }
-  res.send(sentData);
+  // const sentData = {
+  //   data: {
+  //     type: 'settings',
+  //     attributes: {
+  //       sign_author: allSettings.sign_author,
+  //       signature: allSettings.signature,
+  //       createdAt: allSettings.createdAt,
+  //       updateAt: allSettings.updateAt
+  //     },
+  //     links: {
+  //       self: `${process.env.APP_URL_API}/settings`
+  //     }
+  //   }
+  // }
+  res.send(allSettings);
 };
 
+export const showASettingRouteHandler = async (req, res, signId,) => {
+
+  const getSetting = await settingModel.findOne({ _id: signId });
+
+  res.send(getSetting);
+};

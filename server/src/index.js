@@ -1,5 +1,4 @@
 import express from "express";
-import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import "./passport.js";
@@ -11,7 +10,7 @@ import cron from "node-cron";
 import ReseedAction from "./mongo/ReseedAction.js";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
-import fileupload from "express-fileupload"
+
 dotenv.config();
 
 const PORT = process.env.PORT || 8082;
@@ -48,14 +47,7 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(fileupload());
-app.use(bodyParser.json({ type: "application/vnd.api+json", strict: false }));
-app.use(
-    bodyParser.urlencoded({
-      extended: true,
-    })
-  );
-
+app.use(express.json())
 app.get("/", function(req, res) {
     const __dirname = fs.realpathSync(".");
     res.sendFile(path.join(__dirname, "/src/landing/index.html"));

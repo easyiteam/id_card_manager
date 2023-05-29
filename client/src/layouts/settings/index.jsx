@@ -31,6 +31,7 @@ import { AuthContext } from "@/context";
 import settingData from "@/layouts/settings/data/settingData";
 
 import data from "@/layouts/dashboard/components/Projects/data";
+import axios from "axios";
 
 function SettingFunction() {
   
@@ -38,6 +39,7 @@ function SettingFunction() {
 
   const { columns, rows } = data();
 //   console.log(columns)
+  const [allSignAuthors, setSignAuthors] = useState([]);
 
   const [setting, setSetting] = useState({});
   const [newSettingErrors, setNewSettingError] = useState(null);
@@ -55,8 +57,7 @@ function SettingFunction() {
     setSelectedFile(event.target.files[0]);
   };
   const onDrop = useCallback(acceptedFiles => {
-    setInputs({ ...inputs, signature: acceptedFiles[0].mozFullPath } );
-    console.log(acceptedFiles[0].mozFullPath)
+    setInputs({ ...inputs, signature: acceptedFiles[0] } );
         // Loop through accepted files
     acceptedFiles.map(file => {
       // Initialize FileReader browser API
@@ -66,7 +67,6 @@ function SettingFunction() {
         // add the image into the state. Since FileReader reading process is asynchronous, its better to get the latest snapshot state (i.e., prevState) and update it.
         // setInputs( { ...inputs, signature: e.target.result } );
         setFile(e.target.result);
-
       };
       
       // Read the file as Data URL (since we accept only images)
@@ -79,9 +79,6 @@ function SettingFunction() {
     signAuthorError: false,
     signatureError: false,
   });
-
-  const addNewSettingHandler = (newSetting) => setSetting(newSetting);
-
 
   const changeHandler = (e) => {
     setInputs({
@@ -98,36 +95,30 @@ function SettingFunction() {
       return;
     }
 
-    const newSetting = { sign_author: inputs.sign_author, signature: inputs.signature, };
-    addNewSettingHandler(newSetting);
     const formData = new FormData();
-    formData.append('file', inputs.signature);
     formData.append('sign_author', inputs.sign_author);
     formData.append('signature', inputs.signature);
-//     console.log(formData)
-
-    const settingData = {
-      data: {
-        type: "settings",
-        attributes: { ...newSetting },
-      },
-    };
-
-//     console.log(settingData)
 
     try {
-      const response = await SettingService.create(settingData);
-      // authContext.login(response.access_token, response.refresh_token);
-      // console.log(response)
-//       await fetch(`${process.env.REACT_APP_API_URL}/setting/create`, {
-//         method: 'POST',
-//         body: "ilnze",
-//         headers: {
-//           'Content-Type': `application/json; multipart/form-data; boundary=---XYZ`,
-//           'Access-Control-Allow-Credentials': true
-//         },
-//       });
-//       console.log('Fichier téléversé avec succès!');
+      await axios.post(`${process.env.REACT_APP_API_URL}/setting/create`, formData)
+            .then((response) => {
+              // console.log(response.data)
+              if(!response.data.errors) {
+                setInputs({
+                  sign_author: "",
+                  signature: ""
+                });
+                
+                setErrors({
+                  signAuthorError: false,
+                  signatureError: false,
+                });
+                console.log('Fichier téléversé avec succès!');
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            });
     } catch (res) {
       if (res.hasOwnProperty("message")) {
         setNewSettingError(res.message);
@@ -142,9 +133,11 @@ function SettingFunction() {
         signature: ""
       });
 
+      // setFile("");
+
       setErrors({
-        cardNumberError: false,
-        pvError: false,
+        signAuthorError: false,
+        signatureError: false,
       });
     };
   };
@@ -175,6 +168,12 @@ function SettingFunction() {
       <MenuItem onClick={closeMenu}>Something else</MenuItem>
     </Menu>
   );
+
+  const allSign = axios.get(`${process.env.REACT_APP_API_URL}/setting/getAll`)
+  .then((response) => {
+    setSignAuthors(response.data)
+  });
+
 
   return (
     <DashboardLayout>
@@ -236,6 +235,11 @@ function SettingFunction() {
               <MDTypography variant="h6" gutterBottom>
                 Liste des signataires
               </MDTypography>
+              {
+                allSignAuthors.map((setting) =>
+                  <p key={setting.id} value={setting._id} >{setting.sign_author}</p>
+                )
+              }
               {/* <MDBox display="flex" alignItems="center" lineHeight={0}>
                 <Icon
                   sx={{
