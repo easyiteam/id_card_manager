@@ -13,7 +13,7 @@ import MDInput from "@/components/MDInput";
 import MDButton from "@/components/MDButton";
 
 // Authentication layout components
-import CoverLayout from "@/layouts/authentication/components/CoverLayout";
+import BasicLayoutLanding from "@/layouts/authentication/components/BasicLayoutLanding";
 
 // Images
 import bgImage from "@/assets/images/bg-sign-up-cover.jpeg";
@@ -119,7 +119,7 @@ function Register() {
   };
 
   return (
-    <CoverLayout image={bgImage}>
+    <BasicLayoutLanding >
       <Card>
         <MDBox
           variant="gradient"
@@ -133,10 +133,7 @@ function Register() {
           textAlign="center"
         >
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            Join us today
-          </MDTypography>
-          <MDTypography display="block" variant="button" color="white" my={1}>
-            Enter your email and password to register
+            Inscription
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
@@ -144,7 +141,7 @@ function Register() {
             <MDBox mb={2}>
               <MDInput
                 type="text"
-                label="Name"
+                label="Nom et prénoms"
                 variant="standard"
                 fullWidth
                 name="name"
@@ -160,7 +157,7 @@ function Register() {
               />
               {errors.nameError && (
                 <MDTypography variant="caption" color="error" fontWeight="light">
-                  The name can not be empty
+                  Ce champ nom ne doit pas être vide
                 </MDTypography>
               )}
             </MDBox>
@@ -183,14 +180,14 @@ function Register() {
               />
               {errors.emailError && (
                 <MDTypography variant="caption" color="error" fontWeight="light">
-                  The email must be valid
+                  L'adresse mail doit être valide
                 </MDTypography>
               )}
             </MDBox>
             <MDBox mb={2}>
               <MDInput
                 type="password"
-                label="Password"
+                label="Mot de passe"
                 variant="standard"
                 fullWidth
                 name="password"
@@ -200,7 +197,7 @@ function Register() {
               />
               {errors.passwordError && (
                 <MDTypography variant="caption" color="error" fontWeight="light">
-                  The password must be of at least 8 characters
+                  Le mot de passe doit contenir au moins 8 caractères
                 </MDTypography>
               )}
             </MDBox>
@@ -213,22 +210,20 @@ function Register() {
                 sx={{ lineHeight: "1.5", cursor: "pointer" }}
                 htmlFor="agree"
               >
-                &nbsp;&nbsp;I agree to the&nbsp;
+                &nbsp;&nbsp;J'accepte&nbsp;
               </InputLabel>
               <MDTypography
-                component={Link}
-                to="/auth/login"
                 variant="button"
                 fontWeight="bold"
                 color="info"
                 textGradient
               >
-                Terms and Conditions
+                les termes et conditions d'utilisation
               </MDTypography>
             </MDBox>
             {errors.agreeError && (
               <MDTypography variant="caption" color="error" fontWeight="light">
-                You must agree to the Terms and Conditions
+                Vous devez accepter les termes et conditions d'utilisation
               </MDTypography>
             )}
             {errors.error && (
@@ -238,12 +233,12 @@ function Register() {
             )}
             <MDBox mt={4} mb={1}>
               <MDButton variant="gradient" color="info" fullWidth type="submit">
-                sign in
+                Créer un compte
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">
               <MDTypography variant="button" color="text">
-                Already have an account?{" "}
+                Avez-vous déjà un compte ?{" "}
                 <MDTypography
                   component={Link}
                   to="/auth/login"
@@ -252,14 +247,14 @@ function Register() {
                   fontWeight="medium"
                   textGradient
                 >
-                  Sign In
+                  Se connecter
                 </MDTypography>
               </MDTypography>
             </MDBox>
           </MDBox>
         </MDBox>
       </Card>
-    </CoverLayout>
+    </BasicLayoutLanding>
   );
 }
 

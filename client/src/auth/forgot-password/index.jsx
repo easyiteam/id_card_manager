@@ -9,7 +9,7 @@ import MDButton from "@/components/MDButton";
 import MDAlert from "@/components/MDAlert";
 
 // Authentication layout components
-import CoverLayout from "@/layouts/authentication/components/CoverLayout";
+import BasicLayoutLanding from "@/layouts/authentication/components/BasicLayoutLanding";
 
 // Images
 import bgImage from "@/assets/images/bg-reset-cover.jpeg";
@@ -42,7 +42,7 @@ function ForgotPassword() {
     const mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
     if (input.email.trim().length === 0 || !input.email.trim().match(mailFormat)) {
-      setError({ err: true, textError: "The email must be valid" });
+      setError({ err: true, textError: "L'adresse e-mail n'est pas valide" });
       return;
     }
 
@@ -77,7 +77,7 @@ function ForgotPassword() {
   };
 
   return (
-    <CoverLayout coverHeight="50vh" image={bgImage}>
+    <BasicLayoutLanding >
       <Card>
         <MDBox
           variant="gradient"
@@ -91,15 +91,15 @@ function ForgotPassword() {
           textAlign="center"
         >
           <MDTypography variant="h3" fontWeight="medium" color="white" mt={1}>
-            Reset Password
+            Changement de mot de passe
           </MDTypography>
           <MDTypography display="block" variant="button" color="white" my={1}>
-            You will receive an e-mail in maximum 60 seconds
+            Vous recevrez un mail dans 60 secondes maximum
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form" method="POST" onSubmit={handleSubmit}>
-            <MDBox mb={4}>
+            <MDBox mb={2}>
               <MDInput
                 type="email"
                 label="Email"
@@ -116,9 +116,9 @@ function ForgotPassword() {
                 {error.textError}
               </MDTypography>
             )}
-            <MDBox mt={6} mb={1}>
+            <MDBox mt={3} mb={1}>
               <MDButton variant="gradient" color="info" fullWidth type="submit">
-                reset
+                Valider
               </MDButton>
             </MDBox>
           </MDBox>
@@ -133,7 +133,7 @@ function ForgotPassword() {
           </MDTypography>
         </MDAlert>
       )}
-    </CoverLayout>
+    </BasicLayoutLanding>
   );
 }
 

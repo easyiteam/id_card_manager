@@ -76,7 +76,7 @@ function BasicLayout({ image, children }) {
             paddingTop="4em"
           >
             <MDBox paddingBottom="3rem" sx={{ textAlign: "center" }}>
-              {pathname === "/auth/login" && (
+              {(pathname === "/auth/login" || pathname === "/auth/register" || pathname === "/auth/forgot-password") && (
                 <MDBox display="flex" width="100%" justifyContent="center" sx={{ zIndex: "99" }}>
                   <MDBox
                     display="flex"
