@@ -138,102 +138,113 @@ function ShowCard() {
               <MDTypography variant="h4" gutterBottom mb={2} color="primary" style={{ marginBottom: "30px", textAlign: "center"}}>
               CARTE DE COMMISSION D'EMPLOI
               </MDTypography>
-              <Grid spacing={3} className="" display="flex" ref={setComponentRef}>
-                <Grid className="" style={{ marginLeft: "5%", width: "43%", marginRight: "5%" }}>
-                  <Card style={{ width: "400px", height: "690px", borderRadius: "5px", overflow: "hidden", color: "#000", marginBottom: "30px" }}>
-                    <MDBox display="flex" justifyContent="space-between" alignItems="center" mt={1} mb={1}>
-                      <MDBox item xs={8} md={8} lg={8}>
-                        <img src={directionLogo} alt="Logo direction douanes" style={{ width: '100%', marginLeft: '20px', marginTop: '10px'}} />
+              <MDBox className="" style={{ marginLeft: "30%", width: "40%", marginRight: "30%", marginBottom: "60px" }}>
+                <MDBox className="" ref={setComponentRef}>
+                  <Card style={{ width: "323px", height: "480px", paddingTop: "5px", color: "#000", }}>
+                    <MDBox display="flex" justifyContent="space-between" alignItems="center">
+                      <MDBox>
+                        <img src={directionLogo} alt="Logo direction douanes" style={{ width: '161px', height: "43px", marginLeft: '12.6px', marginTop: "7px", padding: "3.6px", opacity: "1", zIndex: "9999",}} />
                       </MDBox>
-                      <MDBox item xs={4} md={4} lg={4}>
-                        <img src={douaneLogo} alt="Logo direction douanes" style={{ width: '25%', float: 'right', marginRight: '20px'}}  />
+                      <MDBox>
+                        <img src={douaneLogo} alt="Logo direction douanes" style={{ width: '43px', height: "43px", float: 'right', marginTop: '2px', marginRight: "28px", zIndex: "9999",}}  />
                       </MDBox>
                     </MDBox>
                     <hr />
-                    <MDBox display="flex" justifyContent="center" alignItems="center">
-                      <MDTypography variant="h6" gutterBottom mt={2} mb={2} style={{ fontWeight: 900, color: "#000" }}>
-                        DIRECTION GÉNÉRALE DES DOUANES
-                      </MDTypography>
-                    </MDBox>
-                    <MDBox sx={{
-                        backgroundImage: `url(${bgCard})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        backgroundRepeat: "no-repeat",
-                        color: "#000",
-                        marginTop: "-15px"
-                      }} >
-                      <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center">
-                        <MDTypography variant="h5" gutterBottom mt={2} style={{ color: "#000" }}>
-                          COMMISSION D'EMPLOI DES DOUANES
+                    <MDBox sx={{ marginLeft: "-15px" }}>
+                      <MDBox justifyContent="center" alignItems="center" textAlign="center" style={{ marginTop: "8px",}}>
+                        <MDTypography style={{ fontWeight: "800", fontSize: "13px", color: "#000", textAlign:"center" }}>
+                          DIRECTION GÉNÉRALE DES DOUANES
                         </MDTypography>
                       </MDBox>
-                      <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center">
-                        <MDTypography variant="h5" gutterBottom mb={2} style={{ color: "#000" }}>
-                          Carte N° : {theCard.card_number}
-                        </MDTypography>
-                      </MDBox>
-                      <MDBox display="flex" justifyContent="center" alignItems="center">
-                        <MDBox sx={{ height: "270px", width: "50%", border: "5px solid #E5E5E5", borderRadius: "10px", padding: "3%"}}>
-                          <img src={ theCard.photo ? photoNormalPath(theCard.photo) : "" } alt="" style={{ width: '100%', height: "100%"}}  />
+                      <MDBox sx={{
+                          backgroundImage: `url(${bgCard})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                          color: "#000",
+                          alignItems:"center",
+                          justifyContent:"center",
+                          justifyItems: "center",
+                          paddingLeft: "12%",
+                          paddingRight: "12%",
+                          marginBottom: "-20px"
+                        }} >
+                        <MDBox justifyContent="center" alignItems="center" textAlign="center">
+                          <MDTypography style={{ color: "#000", fontWeight: "700", fontSize: "15px", marginTop: "2px" }}>
+                            COMMISSION D'EMPLOI DES DOUANES
+                          </MDTypography>
                         </MDBox>
-                      </MDBox>
-                      <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" pt={5} pl={6.5} pr={6.5} pb={2}>
-                        <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000" }}>
-                          Par arrêté <strong>PV N° {theCard.pv != "" ? theCard.pv : "..."}</strong> du { theCard.pv_date != "" ? theCard.pv_date : "..."}, { theCard.gender == "M" ? "Mr" : theCard.gender == "F" ? "Mme" : "..." } {theCard.name != "" ? theCard.name : "..."} {theCard.surname != "" ? theCard.surname : "..."} a prêté serment prescrit par la loi devant le Tribunal Civil de Cotonou
-                        </MDTypography>
+                        <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center">
+                            <MDTypography style={{ color: "#000", fontWeight: "700", fontSize: "13.3px", marginBottom: "10px" }}>
+                              Carte N° : {theCard.card_number}
+                            </MDTypography>
+                          </MDBox>
+                        <MDBox display="flex" justifyContent="center" alignItems="center">
+                          <MDBox sx={{ height: "170px", width: "60%", border: "3px solid #E5E5E5", borderRadius: "10px", padding: "3%"}}>
+                            <img src={ theCard.photo ? photoNormalPath(theCard.photo) : "" } alt="" style={{ width: '100%', height: "100%"}}  />
+                          </MDBox>
+                        </MDBox>
+                        <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" pt={3} pl={2} pr={2} pb={2}>
+                          <p style={{ color: "#000", fontWeight: "400", fontSize: "12px", }}>
+                            Par arrêté <strong style={{ fontWeight: "800"}}>PV N° {theCard.pv != "" ? theCard.pv : "..."}</strong> du { theCard.pv_date != "" ? theCard.pv_date : "..."}, <strong style={{ fontWeight: "600"}}>{ theCard.gender == "M" ? "Mr" : theCard.gender == "F" ? "Mme" : "..." } {theCard.name != "" ? theCard.name : "..."} {theCard.surname != "" ? theCard.surname : "..."}</strong> a prêté serment prescrit par la loi devant le Tribunal Civil de Cotonou
+                          </p>
+                        </MDBox>
                       </MDBox>
                     </MDBox>
                     <MDBox sx={{ marginBottom: '-15px', position: "absolute", bottom: "0" }}>
                       <img src={bgBottom} alt="" style={{ width: '100%'}}  />
                     </MDBox>
                   </Card>
-                </Grid>
-                <Grid className="" style={{ width: "43%", }}>
-                  <Card style={{ width: "400px", height: "690px", borderRadius: "5px", overflow: "hidden", color: "#000" }}>
-                    <MDBox display="flex" justifyContent="space-between" alignItems="center" sx={{
-                        height: "180px",
-                        marginBottom: "20px",
+                  <Card style={{ width: "323px", height: "483px", paddingTop: "5px", color: "#000", overflow: "hidden", marginTop: "20px" }}>
+                    <MDBox sx={{ marginLeft: "-15px" }}>
+                      <MDBox display="flex" justifyContent="space-between" alignItems="center" sx={{
+                        height: "120px",
+                        marginBottom: "40px",
                       }} >
-                      <MDBox style={{ position: "absolute"}}>
-                        <img src={bgTop} alt="" style={{ width: "410px", height: "180px", zIndex: "1" }} />
+                        <MDBox style={{ position: "absolute"}}>
+                          <img src={bgTop} alt="" style={{ width: "100%", height: "180px", zIndex: "1" }} />
+                        </MDBox>
+                        <MDBox style={{ marginTop: "", marginBottom: "50px", marginLeft: "127px", marginRight: "165px"}}>
+                          <img src={douaneLogo} alt="Logo direction douanes" style={{ width: "69px", height: "78px", position: "absolute", zIndex: "9999", }} />
+                        </MDBox>
                       </MDBox>
-                      <MDBox style={{ marginTop: "0px", marginBottom: "80px", marginLeft: "165px", marginRight: "165px"}}>
-                        <img src={douaneLogo} alt="Logo direction douanes" style={{ width: "70px", height: "80px", position: "absolute", zIndex: "9999", }} />
-                      </MDBox>
-                    </MDBox>
-                    <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" pl={6.5} pr={6.5} pb={2}>
-                      <MDTypography variant="h6" gutterBottom mb={2} style={{ color: "#000" }}>
-                        Au nom du peuple béninois, Mr le Directeur Général des Douanes requiert toutes les autorités constituées civiles et militaires de prêter à { theCard.gender == "M" ? "Mr" : theCard.gender == "F" ? "Mme" : "..." } {theCard.name != "" ? theCard.name : "..."} {theCard.surname != "" ? theCard.surname : "..."} aide, appui et protection dans tous ce qui se rattache à l’exercice des fonctions qui lui sont confiées.
-                      </MDTypography>
-                    </MDBox>
-                    <MDBox sx={{
+                      <MDBox sx={{
                         backgroundImage: `url(${bgCard})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",
                         color: "#000",
+                        marginTop: "10px"
                       }} >
+                      <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" pl={3.5} pr={3.5}>
+                        <p style={{  fontSize: "12px", fontWeight: "400", color: "#000" }}>
+                            Au nom du peuple béninois, Mr le Directeur Général des Douanes requiert toutes les autorités constituées civiles et militaires de prêter à  <strong style={{ fontWeight: "600"}}>{ theCard.gender == "M" ? "Mr" : theCard.gender == "F" ? "Mme" : "..." } {theCard.name != "" ? theCard.name : "..."} {theCard.surname != "" ? theCard.surname : "..."}</strong> aide, appui et protection dans tous ce qui se rattache à l’exercice des fonctions qui lui sont confiées.
+                          </p>
+                      </MDBox>
+                      <MDBox style={{ justifyContent:"center", alignItems:"center", textAlign:"center", marginTop: "-10px" }}>
+                        <img src={ divider } alt="Diviseur" style={{ width: "60%", height: "0.8px",}} />
+                      </MDBox>
                       <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center">
-                        <MDTypography variant="h5" gutterBottom style={{ color: "#000", marginLeft: "20px", marginRight: "20px" }}>
+                        <MDTypography style={{ fontSize: "14px", fontWeight: "500", color: "#000", marginLeft: "20px", marginRight: "20px", marginBottom: "15px" }}>
                           Fait à Cotonou, le { formattedToday }
                         </MDTypography>
                       </MDBox>
-                      <MDBox style={{ }}>
-                        <img src={ signPhoto } alt="Logo entreprise" style={{ width: "190px", height: "190px", marginLeft: "100px", marginRight: "100px" }} />
-                      </MDBox>
-                      <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" marginBottom="25px">
-                        <MDTypography variant="h5" gutterBottom style={{ color: "#000", marginLeft: "20px", marginRight: "20px" }}>
+                      <MDBox style={{ justifyContent:"center", alignItems:"center", textAlign:"center", marginBottom: "5px" }}>
+                          <img src={ signPhoto } alt="Logo entreprise" style={{ width: "80px", height: "80px", marginLeft: "116px", marginRight: "116px" }} />
+                        </MDBox>
+                        <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" marginBottom="25px">
+                          <MDTypography style={{ fontSize: "15px", fontWeight: "500", color: "#000", marginLeft: "20px", marginRight: "20px", marginBottom: "5px" }}>
                           { signAuthor }
-                        </MDTypography>
+                          </MDTypography>
+                        </MDBox>
                       </MDBox>
-                    </MDBox>
-                    <MDBox sx={{ marginBottom: '-15px', position: "absolute", bottom: "0" }}>
-                      <img src={bgBottom} alt="" style={{ width: '100%'}}  />
+                      <MDBox sx={{ marginBottom: '-15px', position: "absolute", bottom: "0" }}>
+                        <img src={bgBottom} alt="" style={{ width: '100%'}}  />
+                      </MDBox>
                     </MDBox>
                   </Card>
-                </Grid>
-              </Grid>
+                </MDBox>
+              </MDBox>
             </MDBox>
 
             <MDBox mt={2} mb={1} display="flex" spacing={3} sx={{ }}>
@@ -267,7 +278,7 @@ function ShowCard() {
                 <MDTypography variant="h4" gutterBottom color="primary" style={{ marginBottom: "30px", textAlign: "center"}}>
                   CARTE PROFESSIONNELLE
                 </MDTypography>
-                <MDBox className="" style={{ marginLeft: "20%", width: "60%", marginRight: "20%", marginBottom: "60px" }}>
+                <MDBox className="" style={{ marginLeft: "30%", width: "40%", marginRight: "30%", marginBottom: "60px" }}>
                   <MDBox className="" ref={setComponentRefPro} >
                     <Card style={{ width: "323px", height: "480px", paddingTop: "5px", color: "#000", }}>
                       <MDBox display="flex" justifyContent="space-between" alignItems="center">
@@ -304,11 +315,11 @@ function ShowCard() {
                             </MDTypography>
                           </MDBox>
                           <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center">
-                            <MDTypography style={{ color: "#000", fontWeight: "700", fontSize: "13.3px", marginBottom: "2px" }}>
+                            <MDTypography style={{ color: "#000", fontWeight: "700", fontSize: "13.3px", marginBottom: "10px" }}>
                               N° : {theCard.card_number}
                             </MDTypography>
                           </MDBox>
-                          <MDBox display="flex" justifyContent="center" alignItems="center" sx={{ height: "170px", width: "100%", border: "2px solid #E5E5E5", borderRadius: "10px", padding: "10px", }}>
+                          <MDBox display="flex" justifyContent="center" alignItems="center" sx={{ height: "170px", width: "100%", border: "3px solid #E5E5E5", borderRadius: "10px", padding: "10px", }}>
                             <MDBox style={{  width: "50%", height: "159px", paddingRight: "10px", paddingTop: "10px", overflow: "hidden"}}>
                               <img src={ theCard.photo ? photoNormalPath(theCard.photo) : "" } alt="" style={{ width: '98px', height: "118px", marginLeft: "3px", zIndex: "9999",}}  />
                               <MDTypography style={{ color: "#000", textAlign: "center", paddingRight: "-10px", fontSize:"13px", fontWeight: "800", }}>
@@ -410,7 +421,7 @@ function ShowCard() {
                             <img src={ signProPhoto } alt="Logo entreprise" style={{ width: "80px", height: "80px", marginLeft: "116px", marginRight: "116px" }} />
                           </MDBox>
                           <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" marginBottom="25px">
-                            <MDTypography style={{ fontSize: "15px", fontWeight: "500", color: "#000", marginLeft: "20px", marginRight: "20px", marginBottom: "10px" }}>
+                            <MDTypography style={{ fontSize: "15px", fontWeight: "500", color: "#000", marginLeft: "20px", marginRight: "20px", marginBottom: "12px" }}>
                             { signProAuthor }
                             </MDTypography>
                           </MDBox>
