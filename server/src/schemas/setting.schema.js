@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const settingSchema = new mongoose.Schema({
     sign_author: { required: true, type: String },
     signature: { required: true, type: String },
-    created_at: { type: Date },
+    created_at: { type: Date, default: Date.now() },
     updated_at: { type: Date },
 });
 

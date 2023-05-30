@@ -7,7 +7,9 @@ import Icon from "@mui/material/Icon";
 import MenuItem from '@mui/material/MenuItem';
 import Menu from "@mui/material/Menu";
 
-import { useCallback, useContext, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import styled from 'styled-components';
 
 // Material Dashboard 2 React components
 import MDBox from "@/components/MDBox";
@@ -19,29 +21,69 @@ import MDButton from "@/components/MDButton";
 import DashboardLayout from "@/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "@/examples/Navbars/DashboardNavbar";
 import Footer from "@/examples/Footer";
-import DataTable from "@/examples/Tables/DataTable";
 
 // Import the dropzone component
 import Dropzone from "./data/Dropzone";
 import "./styles.css";
 
 // Data
-import SettingService from "@/services/setting-service";
 import { AuthContext } from "@/context";
-import settingData from "@/layouts/settings/data/settingData";
+import DataTable from 'react-data-table-component';
 
 import data from "@/layouts/dashboard/components/Projects/data";
 import axios from "axios";
+  
+const TextField = styled.input`
+  height: 32px;
+  width: 200px;
+  border-radius: 3px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border: 1px solid #e5e5e5;
+  padding: 0 32px 0 16px;
 
+&:hover {
+  cursor: pointer;
+}
+`;
+
+const ClearButton = styled(MDButton)`
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 34px;
+  width: 32px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const FilterComponent = ({ filterText, onFilter, onClear }) => (
+  <>
+    <TextField
+      id="search"
+      type="text"
+      placeholder="Filtrer par nom"
+      aria-label="Champ de recherche"
+      value={filterText}
+      onChange={onFilter}
+    />
+    <ClearButton type="button" onClick={onClear}>
+      X
+    </ClearButton>
+  </>
+  )
+  
 function SettingFunction() {
   
   const authContext = useContext(AuthContext);
-
-  const { columns, rows } = data();
-//   console.log(columns)
   const [allSignAuthors, setSignAuthors] = useState([]);
 
-  const [setting, setSetting] = useState({});
+  // const [setting, setSetting] = useState({});
   const [newSettingErrors, setNewSettingError] = useState(null);
 
   const [inputs, setInputs] = useState({
@@ -50,14 +92,15 @@ function SettingFunction() {
   });
 
   const [file, setFile] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState([]);
 
+  function photoNormalPath(photo) {
+    return photo.substring(photo.lastIndexOf(''), 9)
+  }
+  
   // IMAGE UPLOADING
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
   const onDrop = useCallback(acceptedFiles => {
-    setInputs({ ...inputs, signature: acceptedFiles[0] } );
+    setSelectedFile(acceptedFiles[0]);
         // Loop through accepted files
     acceptedFiles.map(file => {
       // Initialize FileReader browser API
@@ -97,7 +140,7 @@ function SettingFunction() {
 
     const formData = new FormData();
     formData.append('sign_author', inputs.sign_author);
-    formData.append('signature', inputs.signature);
+    formData.append('signature', selectedFile);
 
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/setting/create`, formData)
@@ -113,7 +156,7 @@ function SettingFunction() {
                   signAuthorError: false,
                   signatureError: false,
                 });
-                console.log('Fichier téléversé avec succès!');
+                setSignAuthors([ ...allSignAuthors, response.data])
               }
             })
             .catch((err) => {
@@ -142,45 +185,74 @@ function SettingFunction() {
     };
   };
 
-  // const { columns, rows } = data();
-  const [menu, setMenu] = useState(null);
-
-  const openMenu = ({ currentTarget }) => setMenu(currentTarget);
-  const closeMenu = () => setMenu(null);
-
-  const renderMenu = (
-    <Menu
-      id="simple-menu"
-      anchorEl={menu}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "left",
-      }}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={Boolean(menu)}
-      onClose={closeMenu}
-    >
-      <MenuItem onClick={closeMenu}>Action</MenuItem>
-      <MenuItem onClick={closeMenu}>Another action</MenuItem>
-      <MenuItem onClick={closeMenu}>Something else</MenuItem>
-    </Menu>
-  );
-
   const allSign = axios.get(`${process.env.REACT_APP_API_URL}/setting/getAll`)
-  .then((response) => {
-    setSignAuthors(response.data)
-  });
+                  .then((response) => {
+                    if(!response.data.errors) {
+                      setSignAuthors(response.data)
+                    }
+                  });
 
+  const columns = [
+    {
+        name: 'Logo de l\'entreprise',
+        selector: row => 
+                    <img 
+                      src={ row.signature ? photoNormalPath(row.signature) : "" } 
+                      alt={"Photo de " + row.sign_author} 
+                      style={{ width: "60px", height: "60px", borderRadius: "50%"}}
+                    />,
+                    // row.photo,
+    },
+    {
+        name: 'Nom et prénoms',
+        selector: row => row.sign_author,
+        sortable: true,
+    },
+    {
+      name: 'Actions',
+      selector: row => <MDBox display="flex" style={{ justifyContent: "center"}}>
+                          <Link to="" style={{ marginRight: "6px", width: "30px", height: "30px", fontSize: "23px", padding: "3px", cursor: "pointer", border: "none", color: "white", backgroundColor: "blue", borderRadius: "50%", outline: "none" }}>
+                            <Icon>edit</Icon>
+                          </Link>
+                          <Link to="" style={{  width: "30px", height: "30px", fontSize: "23px", padding: "3px", cursor: "pointer", border: "none", color: "white", backgroundColor: "red", borderRadius: "50%", outline: "none" }}>
+                            <Icon>delete</Icon>
+                          </Link>
+                        </MDBox>,
+    },
+];
+
+const [filterText, setFilterText] = useState('');
+const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+const filteredItems = allSignAuthors.filter(
+  item => item.sign_author && item.sign_author.toLowerCase().includes(filterText.toLowerCase()),
+);
+
+const subHeaderComponentMemo = useMemo(() => {
+  const handleClear = () => {
+    if (filterText) {
+      setResetPaginationToggle(!resetPaginationToggle);
+      setFilterText('');
+    }
+  };
+
+  return (
+    <FilterComponent onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} />
+  );
+}, [filterText, resetPaginationToggle]);
+
+const paginationComponentOptions = {
+  rowsPerPageText: 'Lignes par page',
+  rangeSeparatorText: 'de',
+  selectAllRowsItem: true,
+  selectAllRowsItemText: 'Totaux',
+};  
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3} style={{  }}>
         <MDBox pb={3}>
-          <Grid container spacing={3} sm={12} md={12} lg={12}>
+          <Grid spacing={3} sm={12} md={12} lg={12}>
               <Card item sm={12} md={12} lg={12} >
                 <MDTypography variant="h3" pl={3} pt={2}>
                   Ajouter un signataire 
@@ -230,46 +302,20 @@ function SettingFunction() {
         </MDBox>
         
         <Card>
-          <MDBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-            <MDBox>
-              <MDTypography variant="h6" gutterBottom>
-                Liste des signataires
-              </MDTypography>
-              {
-                allSignAuthors.map((setting) =>
-                  <p key={setting.id} value={setting._id} >{setting.sign_author}</p>
-                )
-              }
-              {/* <MDBox display="flex" alignItems="center" lineHeight={0}>
-                <Icon
-                  sx={{
-                    fontWeight: "bold",
-                    color: ({ palette: { info } }) => info.main,
-                    mt: -0.5,
-                  }}
-                >
-                  done
-                </Icon>
-                <MDTypography variant="button" fontWeight="regular" color="text">
-                  &nbsp;<strong>30 done</strong> this month
-                </MDTypography>
-              </MDBox> */}
-            </MDBox>
-            <MDBox color="text" px={2}>
-              <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small" onClick={openMenu}>
-                more_vert
-              </Icon>
-            </MDBox>
-            {renderMenu}
-          </MDBox>
           <MDBox>
-            {/* <DataTable
-              table={{ columns, rows }}
-              showTotalEntries={false}
-              isSorted={false}
-              noEndBorder
-              entriesPerPage={false}
-            /> */}
+            <DataTable
+              title="Liste des signataires"
+              columns={columns}
+              data={filteredItems}
+              defaultSortFieldId={1}
+              pagination
+              paginationComponentOptions={paginationComponentOptions}
+              paginationResetDefaultPage={resetPaginationToggle} // optionally, a hook to reset pagination to page 1
+              subHeader
+              subHeaderComponent={subHeaderComponentMemo}
+              // selectableRows
+              persistTableHead
+            />
           </MDBox>
         </Card>
        

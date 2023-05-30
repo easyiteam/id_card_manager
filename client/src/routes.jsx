@@ -39,6 +39,8 @@ Coded by www.creative-tim.com
 import Dashboard from "@/layouts/dashboard";
 import Tables from "@/layouts/tables";
 import AddCard from "@/layouts/addcard";
+import AllCards from "@/layouts/allcards";
+import ShowCard from "@/layouts/showcard";
 import Settings from "@/layouts/settings";
 import Billing from "@/layouts/billing";
 import RTL from "@/layouts/rtl";
@@ -69,12 +71,12 @@ const routes = [
     component: <Dashboard />,
   },
   {
-    type: "examples",
+    type: "collapse",
     name: "Liste des cartes",
-    key: "tables",
+    key: "allcards",
     icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/tables",
-    component: <Tables />,
+    route: "/allcards",
+    component: <AllCards />,
   },
   {
     type: "collapse",
@@ -83,6 +85,13 @@ const routes = [
     icon: <Icon fontSize="small">add</Icon>,
     route: "/addcard",
     component: <AddCard />,
+  },
+  {
+    name: "Affichage d'une carte",
+    key: "showcard",
+    icon: <Icon fontSize="small">show</Icon>,
+    route: "/showcard/:id",
+    component: <ShowCard />,
   },
   {
     type: "collapse",

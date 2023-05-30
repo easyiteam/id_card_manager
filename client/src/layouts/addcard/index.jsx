@@ -298,8 +298,8 @@ function AddCard() {
                     genderError: false,
                     signAuthorError: false,
                   });
-                  navigate("/dashboard");
-                  
+                  navigate(`/showcard/${response.data.id}`);
+                  // navigate("/dashboard");
                 }
               })
               .catch((err) => {
@@ -369,8 +369,7 @@ function AddCard() {
                     bloodGroupError: false,
                     signAuthorError: false,
                   });
-                  navigate("/dashboard");
-                  
+                  navigate(`/showcard/${response.data.id}`);
                 }
               })
               .catch((err) => {
@@ -459,7 +458,7 @@ function AddCard() {
           <MDBox display="flex" >
             <MDBox mb={5}>
               <MDButton variant="gradient" color="info" type="button" onClick={handleComCard}>
-                Carte de commision
+                Carte de commission
               </MDButton>
             </MDBox>
             <MDBox mb={5} ml={4}>
@@ -687,7 +686,7 @@ function AddCard() {
                       </MDTypography>
                     </MDBox>
                     <MDBox style={{ }}>
-                      <img src={ signPhoto } alt="Logo entreprise" style={{ width: "200px", height: "200px", marginLeft: "100px", marginRight: "100px" }} />
+                      <img src={ signPhoto } alt="Logo entreprise" style={{ width: "190px", height: "190px", marginLeft: "100px", marginRight: "100px" }} />
                     </MDBox>
                     <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" marginBottom="25px">
                       <MDTypography variant="h5" gutterBottom style={{ color: "#000", marginLeft: "20px", marginRight: "20px" }}>
@@ -986,8 +985,8 @@ function AddCard() {
                           Fait à Cotonou, le { formattedToday }
                         </MDTypography>
                       </MDBox>
-                      <MDBox style={{ }}>
-                        <img src={ signProPhoto } alt="Logo entreprise" style={{ width: "200px", height: "200px", marginLeft: "100px", marginRight: "100px" }} />
+                      <MDBox style={{ }} mt={2}>
+                        <img src={ signProPhoto } alt="Logo entreprise" style={{ width: "190px", height: "190px", marginLeft: "100px", marginRight: "100px" }} />
                       </MDBox>
                       <MDBox display="flex" justifyContent="center" alignItems="center" textAlign="center" marginBottom="25px">
                         <MDTypography variant="h5" gutterBottom style={{ color: "#000", marginLeft: "20px", marginRight: "20px" }}>

@@ -25,23 +25,7 @@ export const createSettingRouteHandler = async (req, res, sign_author, signature
 };
 
 export const showAllSettingsRouteHandler = async (req, res) => {
-
-  const allSettings = await settingModel.find();
-
-  // const sentData = {
-  //   data: {
-  //     type: 'settings',
-  //     attributes: {
-  //       sign_author: allSettings.sign_author,
-  //       signature: allSettings.signature,
-  //       createdAt: allSettings.createdAt,
-  //       updateAt: allSettings.updateAt
-  //     },
-  //     links: {
-  //       self: `${process.env.APP_URL_API}/settings`
-  //     }
-  //   }
-  // }
+  const allSettings = await settingModel.find().sort({ created_at: "desc"});
   res.send(allSettings);
 };
 

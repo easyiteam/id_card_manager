@@ -2,6 +2,7 @@ import express from "express";
 import {
   createCardRouteHandler,
   createCardProRouteHandler,
+  showAllCardsRouteHandler,
   showACardRouteHandler,
 } from "../../services/card/index.js";
 import multer from 'multer';
@@ -41,7 +42,7 @@ const upload = multer({
 });
 
 const uploadPro = multer({
-  storage: multerStorage,
+  storage: multerStoragePro,
   // fileFilter: multerFilter,
 });
 
@@ -73,8 +74,12 @@ router.post("/createpro", uploadPro.single('photo'), async (req, res, next) => {
   const photo = req.file.path;
   const sign_author = req.body.sign_author;
   const type = req.body.type;
-    
+  
   await createCardProRouteHandler(req, res, card_number, matricule_number, name, surname, bornDate, bornPlace, bloodGroup, grade, photo, sign_author, type,);
+});
+
+router.get("/getAll", async (req, res, next) => {
+  await showAllCardsRouteHandler(req, res,);
 });
 
 router.post("/getACard", async (req, res, next) => {

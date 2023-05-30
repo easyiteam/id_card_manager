@@ -33,6 +33,7 @@ export const createCardRouteHandler = async (req, res, card_number, name, surnam
   await newCard.save();
 
   return res.status(200).json({
+    id: newCard._id,
     card_number: newCard.card_number,
   });
 };
@@ -71,8 +72,17 @@ export const createCardProRouteHandler = async (req, res, card_number, matricule
   await newCard.save();
 
   return res.status(200).json({
+    id: newCard._id,
     card_number: newCard.card_number,
   });
+};
+
+export const showAllCardsRouteHandler = async (req, res) => {
+  const allCards = await cardModel.find().sort({ created_at: "desc"}).populate({
+    path: "sign_author",
+    model: "Setting"
+  });
+  res.send(allCards);
 };
 
 export const showACardRouteHandler = async (req, res, cardId,) => {

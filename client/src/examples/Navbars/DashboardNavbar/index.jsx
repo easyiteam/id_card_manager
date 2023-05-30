@@ -190,16 +190,17 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 <Icon sx={iconsStyle}>notifications</Icon>
               </IconButton> */}
               {renderMenu()}
-              <MDBox>
+              <MDBox pl={3}>
                 <MDButton
                   variant="gradient"
                   color="error"
                   fullWidth
                   type="button"
                   onClick={handleLogOut}
+                  sx={{ fontWeight: "600"}}
                 >
-                  <Icon>logout</Icon> &nbsp;
-                  Se déconnecter
+                  <Icon>logout</Icon>
+                  {/* &nbsp;Se déconnecter */}
                 </MDButton>
               </MDBox>
             </MDBox>
