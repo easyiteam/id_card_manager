@@ -13,7 +13,7 @@ import cookieParser from "cookie-parser";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 8082;
+const PORT = process.env.PORT || 8080;
 const app = express();
 
 const whitelist = "http://localhost:5173";
