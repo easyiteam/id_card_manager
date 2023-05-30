@@ -176,10 +176,10 @@ function AllCards() {
                             <Link to={`/showcard/${row._id}`} style={{ marginRight: "6px", width: "30px", height: "30px", fontSize: "23px", padding: "3px", cursor: "pointer", border: "none", color: "white", backgroundColor: "gray", borderRadius: "50%", outline: "none" }}>
                               <Icon>eye</Icon>
                             </Link>
-                            <Link to="" style={{ marginRight: "6px", width: "30px", height: "30px", fontSize: "23px", padding: "3px", cursor: "pointer", border: "none", color: "white", backgroundColor: "blue", borderRadius: "50%", outline: "none" }}>
+                            <Link to={`/editcard/${row._id}`} style={{ marginRight: "6px", width: "30px", height: "30px", fontSize: "23px", padding: "3px", cursor: "pointer", border: "none", color: "white", backgroundColor: "blue", borderRadius: "50%", outline: "none" }}>
                               <Icon>edit</Icon>
                             </Link>
-                            <Link to="" style={{  width: "30px", height: "30px", fontSize: "23px", padding: "3px", cursor: "pointer", border: "none", color: "white", backgroundColor: "red", borderRadius: "50%", outline: "none" }}>
+                            <Link to={`/showcard/${row._id}`} style={{  width: "30px", height: "30px", fontSize: "23px", padding: "3px", cursor: "pointer", border: "none", color: "white", backgroundColor: "red", borderRadius: "50%", outline: "none" }}>
                               <Icon>delete</Icon>
                             </Link>
                           </MDBox>,

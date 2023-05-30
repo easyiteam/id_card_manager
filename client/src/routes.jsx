@@ -39,6 +39,8 @@ Coded by www.creative-tim.com
 import Dashboard from "@/layouts/dashboard";
 import Tables from "@/layouts/tables";
 import AddCard from "@/layouts/addcard";
+import EditCard from "@/layouts/editcard";
+import DeleteCard from "@/layouts/deletecard";
 import AllCards from "@/layouts/allcards";
 import ShowCard from "@/layouts/showcard";
 import Settings from "@/layouts/settings";
@@ -92,6 +94,20 @@ const routes = [
     icon: <Icon fontSize="small">show</Icon>,
     route: "/showcard/:id",
     component: <ShowCard />,
+  },
+  {
+    name: "Modifier une carte",
+    key: "editcard",
+    icon: <Icon fontSize="small">edit</Icon>,
+    route: "/editcard/:id",
+    component: <EditCard />,
+  },
+  {
+    name: "Supprimer une carte",
+    key: "deletecard",
+    icon: <Icon fontSize="small">delete</Icon>,
+    route: "/deletecard/:id",
+    component: <DeleteCard />,
   },
   {
     type: "collapse",

@@ -65,58 +65,43 @@ function ShowCard() {
   const [signProAuthor, setAuthProCom] = useState([]);
   const [signProPhoto, setPhotoProCom] = useState([]);
 
-  function photoNormalPath(photo) {
-    return photo.substring(photo.lastIndexOf(''), 9)
-  }
-  
   const cardReq = axios.post(`${process.env.REACT_APP_API_URL}/card/getACard`, { cardId: id })
                     .then((response) => {
                       if(!response.data.errors) {
-
                         setCard(response.data)
-
-                        if(response.data.type == "1") {
-                          setAuthCom(response.data.sign_author.sign_author);
-                          const filePath = photoNormalPath(response.data.sign_author.signature);
-                          setPhotoCom(filePath);
-                        } else if(response.data.type == "2") {
-                          setAuthProCom(response.data.sign_author.sign_author);
-                          const filePath = photoNormalPath(response.data.sign_author.signature);
-                          setPhotoProCom(filePath);
-                        }
                       }
                     });
-
-
-  const todayDate = new Date()
-  const yyyy = todayDate.getFullYear();
-  let mm = todayDate.getMonth() + 1; // Months start at 0!
-  let dd = todayDate.getDate();
-
-  if (dd < 10) dd = '0' + dd;
-  if (mm < 10) mm = '0' + mm;
-
-  const formattedToday = dd + '/' + mm + '/' + yyyy;
-
-  function formatDate(input) {
-    let datePart = input.match(/\d+/g),
-    year = datePart[0].substring(0), // get only two digits
-    month = datePart[1], day = datePart[2];
-
-    return day+'/'+month+'/'+year;
-  }
 
   const submitHandler = async (e) => {
     e.preventDefault();
     console.log(e)
+
+    axios.post(`${process.env.REACT_APP_API_URL}/card/deleteCard`, { cardId: id })
+                    .then((response) => {
+                      if(!response.data.errors) {
+                        setCard(response.data)
+                      }
+                    });
     
   };
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox py={3} style={{  }}>
-        
+      <MDBox py={3} style={{ textAlign: "center" }} justifyContent="center">
+        <MDBox>
+          <MDTypography variant="h3" gutterBottom mb={2} color="error">
+            Voulez-vous vraiment supprimer cette carte { theCard.type == "1" ? "de commission" : theCard.type == "2" ? "professionnelle" : "" } ? Il est important que vous sachiez que cette action est irréversible
+          </MDTypography>
+        </MDBox>
+        <MDBox mt={2} mb={1} display="flex">
+          <MDButton variant="gradient" color="secondary" type="button">
+            Annuler
+          </MDButton>
+          <MDButton variant="gradient" color="error" type="button" onClick={submitHandler}>
+            Confirmer la suppression
+          </MDButton>
+        </MDBox>
       </MDBox>
       <MDBox style={{ position: "absolute", bottom: "0"}}>
         <Footer />
