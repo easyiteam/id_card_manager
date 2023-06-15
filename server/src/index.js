@@ -1,67 +1,54 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import "./passport.js";
-// import { dbConnect } from "./mongo/index.js";
-import { meRoutes, authRoutes, cardRoutes, settingRoutes } from "./routes/index.js";
-import path from "path";
-import * as fs from "fs";
-import cron from "node-cron";
-import ReseedAction from "./mongo/ReseedAction.js";
-import mongoose from "mongoose";
-import cookieParser from "cookie-parser";
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import './passport.js';
+import {
+  meRoutes,
+  authRoutes,
+  cardRoutes,
+  settingRoutes,
+} from './routes/index.js';
+import path from 'path';
+import * as fs from 'fs';
+import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import { MONGO_URI } from './mongo/index.js';
+import { seedDB } from './mongo/seedData.js';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
 const app = express();
 
-const whitelist = "http://localhost:5173";
-const corsOptions = {
-    // origin: function (origin, callback) {
-    //   if (!origin || whitelist.indexOf(origin) !== -1) {
-    //     callback(null, true);
-    //   } else {
-    //     callback(new Error("Not allowed by CORS"));
-    //   }
-    // }, 
-    origin: 'http://localhost:5173',
-    credentials: true,
-};
+mongoose
+  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Connected to db');
+  })
+  .catch(() => {
+    console.log('Error while connecting to DB');
+  });
 
-// dbConnect(); 
-
-/** 
- * Connect to MongoDB
- * @type {string}
- */
-const uri = "mongodb+srv://Klasik:i8sjfHDq2OlBFYSz@cluster0.11sqa.mongodb.net/iDCardManager?retryWrites=true&w=majority";
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
-        console.log('Connected to db');
-    })
-    .catch(() => {
-        console.log('Error while connecting to DB');
-    });
-
-
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(cookieParser());
-app.use(express.json())
-app.get("/", function(req, res) {
-    const __dirname = fs.realpathSync(".");
-    res.sendFile(path.join(__dirname, "/src/landing/index.html"));
+app.use(express.json());
+app.get('/', function (req, res) {
+  const __dirname = fs.realpathSync('.');
+  res.sendFile(path.join(__dirname, '/src/landing/index.html'));
 });
 
-app.use("/", authRoutes);
-app.use("/me", meRoutes);
-app.use("/card", cardRoutes);
-app.use("/setting", settingRoutes);
+app.get('/seed', async (_, res) => {
+  try {
+    await seedDB();
+    res.send('Seed successfully!');
+  } catch (error) {
+    res.status(500).end();
+  }
+});
 
-if (process.env.SCHEDULE_HOUR) {
-    cron.schedule(`0 */${process.env.SCHEDULE_HOUR} * * *'`, () => {
-        ReseedAction();
-    });
-}
+app.use('/', authRoutes);
+app.use('/me', meRoutes);
+app.use('/card', cardRoutes);
+app.use('/setting', settingRoutes);
 
 app.listen(PORT, () => console.log(`Server listening to port ${PORT}`));

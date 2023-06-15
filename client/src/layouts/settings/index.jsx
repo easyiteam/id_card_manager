@@ -1,38 +1,28 @@
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import Icon from '@mui/material/Icon';
 
-
-// @mui material components
-import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
-import Icon from "@mui/material/Icon";
-import MenuItem from '@mui/material/MenuItem';
-import Menu from "@mui/material/Menu";
-
-import { useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-// Material Dashboard 2 React components
-import MDBox from "@/components/MDBox";
-import MDTypography from "@/components/MDTypography";
-import MDInput from "@/components/MDInput";
-import MDButton from "@/components/MDButton";
+import MDBox from '@/components/MDBox';
+import MDTypography from '@/components/MDTypography';
+import MDInput from '@/components/MDInput';
+import MDButton from '@/components/MDButton';
 
-// Material Dashboard 2 React example components
-import DashboardLayout from "@/examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "@/examples/Navbars/DashboardNavbar";
-import Footer from "@/examples/Footer";
+import DashboardLayout from '@/examples/LayoutContainers/DashboardLayout';
+import DashboardNavbar from '@/examples/Navbars/DashboardNavbar';
+import Footer from '@/examples/Footer';
 
-// Import the dropzone component
-import Dropzone from "./data/Dropzone";
-import "./styles.css";
+import Dropzone from './data/Dropzone';
+import './styles.css';
 
-// Data
-import { AuthContext } from "@/context";
+// import { AuthContext } from '@/context';
 import DataTable from 'react-data-table-component';
 
-import data from "@/layouts/dashboard/components/Projects/data";
-import axios from "axios";
-  
+import axios from 'axios';
+
 const TextField = styled.input`
   height: 32px;
   width: 200px;
@@ -44,9 +34,9 @@ const TextField = styled.input`
   border: 1px solid #e5e5e5;
   padding: 0 32px 0 16px;
 
-&:hover {
-  cursor: pointer;
-}
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const ClearButton = styled(MDButton)`
@@ -62,6 +52,7 @@ const ClearButton = styled(MDButton)`
   justify-content: center;
 `;
 
+// eslint-disable-next-line react/prop-types
 const FilterComponent = ({ filterText, onFilter, onClear }) => (
   <>
     <TextField
@@ -76,42 +67,41 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
       X
     </ClearButton>
   </>
-  )
-  
+);
+
 function SettingFunction() {
-  
-  const authContext = useContext(AuthContext);
+  // const authContext = useContext(AuthContext);
   const [allSignAuthors, setSignAuthors] = useState([]);
 
   // const [setting, setSetting] = useState({});
   const [newSettingErrors, setNewSettingError] = useState(null);
 
   const [inputs, setInputs] = useState({
-    sign_author: "",
-    signature: "",
+    sign_author: '',
+    signature: '',
   });
 
-  const [file, setFile] = useState("");
+  const [file, setFile] = useState('');
   const [selectedFile, setSelectedFile] = useState([]);
 
   function photoNormalPath(photo) {
-    return photo.substring(photo.lastIndexOf(''), 9)
+    return photo.substring(photo.lastIndexOf(''), 9);
   }
-  
+
   // IMAGE UPLOADING
-  const onDrop = useCallback(acceptedFiles => {
+  const onDrop = useCallback((acceptedFiles) => {
     setSelectedFile(acceptedFiles[0]);
-        // Loop through accepted files
-    acceptedFiles.map(file => {
+    // Loop through accepted files
+    acceptedFiles.map((file) => {
       // Initialize FileReader browser API
       const reader = new FileReader();
       // onload callback gets called after the reader reads the file data
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         // add the image into the state. Since FileReader reading process is asynchronous, its better to get the latest snapshot state (i.e., prevState) and update it.
         // setInputs( { ...inputs, signature: e.target.result } );
         setFile(e.target.result);
       };
-      
+
       // Read the file as Data URL (since we accept only images)
       reader.readAsDataURL(file);
       return file;
@@ -132,7 +122,7 @@ function SettingFunction() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    
+
     if (inputs.sign_author.trim().length < 3) {
       setErrors({ ...errors, signAuthorError: true });
       return;
@@ -143,27 +133,28 @@ function SettingFunction() {
     formData.append('signature', selectedFile);
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/setting/create`, formData)
-            .then((response) => {
-              // console.log(response.data)
-              if(!response.data.errors) {
-                setInputs({
-                  sign_author: "",
-                  signature: ""
-                });
-                
-                setErrors({
-                  signAuthorError: false,
-                  signatureError: false,
-                });
-                setSignAuthors([ ...allSignAuthors, response.data])
-              }
-            })
-            .catch((err) => {
-              console.log(err)
+      await axios
+        .post(`${import.meta.env.VITE_APP_API_URL}/setting/create`, formData)
+        .then((response) => {
+          // console.log(response.data)
+          if (!response.data.errors) {
+            setInputs({
+              sign_author: '',
+              signature: '',
             });
+
+            setErrors({
+              signAuthorError: false,
+              signatureError: false,
+            });
+            setSignAuthors([...allSignAuthors, response.data]);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } catch (res) {
-      if (res.hasOwnProperty("message")) {
+      if ('message' in res) {
         setNewSettingError(res.message);
       } else {
         setNewSettingError(res.errors[0].detail);
@@ -172,8 +163,8 @@ function SettingFunction() {
 
     return () => {
       setInputs({
-        sign_author: "",
-        signature: ""
+        sign_author: '',
+        signature: '',
       });
 
       // setFile("");
@@ -185,122 +176,178 @@ function SettingFunction() {
     };
   };
 
-  const allSign = axios.get(`${process.env.REACT_APP_API_URL}/setting/getAll`)
-                  .then((response) => {
-                    if(!response.data.errors) {
-                      setSignAuthors(response.data)
-                    }
-                  });
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_APP_API_URL}/setting/getAll`)
+      .then((response) => {
+        if (!response.data.errors) {
+          setSignAuthors(response.data);
+        }
+      });
+  }, []);
 
   const columns = [
     {
-        name: 'Logo de l\'entreprise',
-        selector: row => 
-                    <img 
-                      src={ row.signature ? photoNormalPath(row.signature) : "" } 
-                      alt={"Photo de " + row.sign_author} 
-                      style={{ width: "60px", height: "60px", borderRadius: "50%"}}
-                    />,
-                    // row.photo,
+      name: "Logo de l'entreprise",
+      selector: (row) => (
+        <img
+          src={row.signature ? photoNormalPath(row.signature) : ''}
+          alt={'Photo de ' + row.sign_author}
+          style={{ width: '60px', height: '60px', borderRadius: '50%' }}
+        />
+      ),
+      // row.photo,
     },
     {
-        name: 'Nom et prénoms',
-        selector: row => row.sign_author,
-        sortable: true,
+      name: 'Nom et prénoms',
+      selector: (row) => row.sign_author,
+      sortable: true,
     },
     {
       name: 'Actions',
-      selector: row => <MDBox display="flex" style={{ justifyContent: "center"}}>
-                          <Link to="" style={{ marginRight: "6px", width: "30px", height: "30px", fontSize: "23px", padding: "3px", cursor: "pointer", border: "none", color: "white", backgroundColor: "blue", borderRadius: "50%", outline: "none" }}>
-                            <Icon>edit</Icon>
-                          </Link>
-                          <Link to="" style={{  width: "30px", height: "30px", fontSize: "23px", padding: "3px", cursor: "pointer", border: "none", color: "white", backgroundColor: "red", borderRadius: "50%", outline: "none" }}>
-                            <Icon>delete</Icon>
-                          </Link>
-                        </MDBox>,
+      selector: () => (
+        <MDBox display="flex" style={{ justifyContent: 'center' }}>
+          <Link
+            to=""
+            style={{
+              marginRight: '6px',
+              width: '30px',
+              height: '30px',
+              fontSize: '23px',
+              padding: '3px',
+              cursor: 'pointer',
+              border: 'none',
+              color: 'white',
+              backgroundColor: 'blue',
+              borderRadius: '50%',
+              outline: 'none',
+            }}>
+            <Icon>edit</Icon>
+          </Link>
+          <Link
+            to=""
+            style={{
+              width: '30px',
+              height: '30px',
+              fontSize: '23px',
+              padding: '3px',
+              cursor: 'pointer',
+              border: 'none',
+              color: 'white',
+              backgroundColor: 'red',
+              borderRadius: '50%',
+              outline: 'none',
+            }}>
+            <Icon>delete</Icon>
+          </Link>
+        </MDBox>
+      ),
     },
-];
+  ];
 
-const [filterText, setFilterText] = useState('');
-const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
-const filteredItems = allSignAuthors.filter(
-  item => item.sign_author && item.sign_author.toLowerCase().includes(filterText.toLowerCase()),
-);
-
-const subHeaderComponentMemo = useMemo(() => {
-  const handleClear = () => {
-    if (filterText) {
-      setResetPaginationToggle(!resetPaginationToggle);
-      setFilterText('');
-    }
-  };
-
-  return (
-    <FilterComponent onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} />
+  const [filterText, setFilterText] = useState('');
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+  const filteredItems = allSignAuthors.filter(
+    (item) =>
+      item.sign_author &&
+      item.sign_author.toLowerCase().includes(filterText.toLowerCase()),
   );
-}, [filterText, resetPaginationToggle]);
 
-const paginationComponentOptions = {
-  rowsPerPageText: 'Lignes par page',
-  rangeSeparatorText: 'de',
-  selectAllRowsItem: true,
-  selectAllRowsItemText: 'Totaux',
-};  
+  const subHeaderComponentMemo = useMemo(() => {
+    const handleClear = () => {
+      if (filterText) {
+        setResetPaginationToggle(!resetPaginationToggle);
+        setFilterText('');
+      }
+    };
+
+    return (
+      <FilterComponent
+        onFilter={(e) => setFilterText(e.target.value)}
+        onClear={handleClear}
+        filterText={filterText}
+      />
+    );
+  }, [filterText, resetPaginationToggle]);
+
+  const paginationComponentOptions = {
+    rowsPerPageText: 'Lignes par page',
+    rangeSeparatorText: 'de',
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'Totaux',
+  };
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox py={3} style={{  }}>
+      <MDBox py={3} style={{}}>
         <MDBox pb={3}>
           <Grid spacing={3} sm={12} md={12} lg={12}>
-              <Card item sm={12} md={12} lg={12} >
-                <MDTypography variant="h3" pl={3} pt={2}>
-                  Ajouter un signataire 
+            <Card item sm={12} md={12} lg={12}>
+              <MDTypography variant="h3" pl={3} pt={2}>
+                Ajouter un signataire
+              </MDTypography>
+              <MDBox justifyContent="space-between" alignItems="center" p={3}>
+                <MDTypography variant="h6" gutterBottom mb={2} color="error">
+                  Tous les champs sont obligatoires (*)
                 </MDTypography>
-                <MDBox justifyContent="space-between" alignItems="center" p={3}>
-                  <MDTypography variant="h6" gutterBottom mb={2} color="error">
-                    Tous les champs sont obligatoires (*)
+                {newSettingErrors && (
+                  <MDTypography
+                    variant="caption"
+                    color="error"
+                    fontWeight="light"
+                    pt={2}>
+                    {newSettingErrors}
                   </MDTypography>
-                  {newSettingErrors && (
-                    <MDTypography variant="caption" color="error" fontWeight="light" pt={2}>
-                      {newSettingErrors}
-                    </MDTypography>
-                  )}
-                  <MDBox component="form" role="form" method="POST" onSubmit={submitHandler} encType="multipart/form-data">
-                    <MDBox mb={2}>
-                      <MDInput
-                        type="text"
-                        label="Nom et prénoms du signataire*"
-                        fullWidth
-                        name="sign_author"
-                        value={inputs.sign_author}
-                        onChange={changeHandler}
-                        error={errors.signAuthorError}
-                      />
-                    </MDBox>
-                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={6} lg={6}>
-                        <MDBox mb={2}>
-                          <Dropzone onDrop={onDrop} accept={"image/*"} />
-                        </MDBox>
-                      </Grid >
-                      <Grid item xs={12} md={6} lg={6}>
-                        <MDBox mb={2}>
-                         { file != "" ? <img src={file} alt="" style={{ width: "180px", height: "180px" }} /> : "" }
-                        </MDBox>
-                      </Grid >
+                )}
+                <MDBox
+                  component="form"
+                  role="form"
+                  method="POST"
+                  onSubmit={submitHandler}
+                  encType="multipart/form-data">
+                  <MDBox mb={2}>
+                    <MDInput
+                      type="text"
+                      label="Nom et prénoms du signataire*"
+                      fullWidth
+                      name="sign_author"
+                      value={inputs.sign_author}
+                      onChange={changeHandler}
+                      error={errors.signAuthorError}
+                    />
+                  </MDBox>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={6} lg={6}>
+                      <MDBox mb={2}>
+                        <Dropzone onDrop={onDrop} accept={'image/*'} />
+                      </MDBox>
                     </Grid>
-                    <MDBox mt={2} mb={1}>
-                      <MDButton variant="gradient" color="info" type="submit">
-                        Enregistrer
-                      </MDButton>
-                    </MDBox>
+                    <Grid item xs={12} md={6} lg={6}>
+                      <MDBox mb={2}>
+                        {file != '' ? (
+                          <img
+                            src={file}
+                            alt=""
+                            style={{ width: '180px', height: '180px' }}
+                          />
+                        ) : (
+                          ''
+                        )}
+                      </MDBox>
+                    </Grid>
+                  </Grid>
+                  <MDBox mt={2} mb={1}>
+                    <MDButton variant="gradient" color="info" type="submit">
+                      Enregistrer
+                    </MDButton>
                   </MDBox>
                 </MDBox>
-              </Card>
+              </MDBox>
+            </Card>
           </Grid>
         </MDBox>
-        
+
         <Card>
           <MDBox>
             <DataTable
@@ -318,8 +365,7 @@ const paginationComponentOptions = {
             />
           </MDBox>
         </Card>
-       
-        </MDBox>
+      </MDBox>
       <Footer />
     </DashboardLayout>
   );

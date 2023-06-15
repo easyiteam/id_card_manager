@@ -28,7 +28,7 @@ function ForgotPassword() {
   });
 
   useEffect(() => {
-    setIsDemo(process.env.REACT_APP_IS_DEMO === "true");
+    setIsDemo(import.meta.env.VITE_APP_IS_DEMO === "true");
   }, []);
 
   const changeHandler = (e) => {
@@ -52,7 +52,7 @@ function ForgotPassword() {
       data: {
         type: "password-forgot",
         attributes: {
-          redirect_url: `${process.env.REACT_APP_URL}/auth/reset-password`,
+          redirect_url: `${import.meta.env.VITE_APP_URL}/auth/reset-password`,
           ...input,
         },
       },

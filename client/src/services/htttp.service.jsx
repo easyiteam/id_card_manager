@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = import.meta.env.VITE_APP_API_URL;
 Axios.defaults.baseURL = API_URL;
 
 export class HttpService {
@@ -30,7 +30,7 @@ export class HttpService {
       url,
       data,
       // headers: { "Content-Type": "application/vnd.api+json", "Accept": "application/vnd.api+json", 'Access-Control-Allow-Credentials': true },
-    }; 
+    };
   };
 
   request(options) {

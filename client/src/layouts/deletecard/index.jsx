@@ -51,7 +51,7 @@ import { inputAdornmentClasses } from "@mui/material";
 import axios from "axios";
 
 function ShowCard() {
-  
+
   const authContext = useContext(AuthContext);
 
   const [typeCard, setTypeCard] = useState("");
@@ -65,7 +65,7 @@ function ShowCard() {
   const [signProAuthor, setAuthProCom] = useState([]);
   const [signProPhoto, setPhotoProCom] = useState([]);
 
-  const cardReq = axios.post(`${process.env.REACT_APP_API_URL}/card/getACard`, { cardId: id })
+  const cardReq = axios.post(`${import.meta.env.VITE_APP_API_URL}/card/getACard`, { cardId: id })
                     .then((response) => {
                       if(!response.data.errors) {
                         setCard(response.data)
@@ -76,13 +76,13 @@ function ShowCard() {
     e.preventDefault();
     console.log(e)
 
-    axios.post(`${process.env.REACT_APP_API_URL}/card/deleteCard`, { cardId: id })
+    axios.post(`${import.meta.env.VITE_APP_API_URL}/card/deleteCard`, { cardId: id })
                     .then((response) => {
                       if(!response.data.errors) {
                         setCard(response.data)
                       }
                     });
-    
+
   };
 
   return (

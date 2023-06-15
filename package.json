@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@neutralinojs/neu": "^9.6.0",
     "concurrently": "^8.0.1"
   }
 }

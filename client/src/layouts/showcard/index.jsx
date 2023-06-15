@@ -53,7 +53,7 @@ import axios from "axios";
 import ReactToPrint from "react-to-print";
 
 function ShowCard() {
-  
+
   const authContext = useContext(AuthContext);
 
   const [typeCard, setTypeCard] = useState("");
@@ -75,8 +75,8 @@ function ShowCard() {
   function photoNormalPath(photo) {
     return photo.substring(photo.lastIndexOf(''), 9)
   }
-  
-  axios.post(`${process.env.REACT_APP_API_URL}/card/getACard`, { cardId: id })
+
+  axios.post(`${import.meta.env.VITE_APP_API_URL}/card/getACard`, { cardId: id })
                     .then((response) => {
                       if(!response.data.errors) {
 
@@ -116,13 +116,13 @@ function ShowCard() {
   const submitHandler = async (e) => {
     e.preventDefault();
     console.log(e)
-    
+
   };
 
   function setComponentRef (ref) {
     componentRef = ref;
   }
-  
+
   function setComponentRefPro (refPro) {
     componentRefPro = refPro;
   }
@@ -273,7 +273,7 @@ function ShowCard() {
          : "" }
 
          { theCard.type == "2" ?
-            <MDBox> 
+            <MDBox>
               <MDBox>
                 <MDTypography variant="h4" gutterBottom color="primary" style={{ marginBottom: "30px", textAlign: "center"}}>
                   CARTE PROFESSIONNELLE
@@ -338,7 +338,7 @@ function ShowCard() {
                           <MDBox mt={2} sx={{ width: "100%", height: "130px", overflow: "hidden"}} >
                             <MDBox display="flex" mb={0.3} >
                                 <MDTypography style={{ fontSize: "14px", fontWeight: "500", color: "#000", width: "50%", overflow: "hidden",}}>
-                                  Nom: 
+                                  Nom:
                                 </MDTypography>
                                 <MDTypography style={{ fontSize: "14px", color: "#000", width: "50%", overflow: "hidden", fontWeight: "800"}}>
                                   {theCard.name != "" ? theCard.name : "..."}
@@ -346,7 +346,7 @@ function ShowCard() {
                             </MDBox>
                             <MDBox display="flex" mb={0.3} >
                                 <MDTypography style={{ fontSize: "14px", fontWeight: "500", color: "#000", width: "50%", overflow: "hidden",}}>
-                                  Prénom(s): 
+                                  Prénom(s):
                                 </MDTypography>
                                 <MDTypography style={{ fontSize: "14px", color: "#000", width: "50%", overflow: "hidden", fontWeight: "800"}}>
                                   {theCard.surname != "" ? theCard.surname : "..."}
@@ -354,7 +354,7 @@ function ShowCard() {
                             </MDBox>
                             <MDBox display="flex" mb={0.3} >
                                 <MDTypography style={{ fontSize: "14px", fontWeight: "500", color: "#000", width: "50%", overflow: "hidden",}}>
-                                  Date de naissance: 
+                                  Date de naissance:
                                 </MDTypography>
                                 <MDTypography style={{ fontSize: "14px", color: "#000", width: "50%", overflow: "hidden", fontWeight: "800"}}>
                                   { theCard.bornDate != "" ? theCard.bornDate : "..." }
@@ -370,7 +370,7 @@ function ShowCard() {
                             </MDBox>
                             <MDBox display="flex" mb={0.3} >
                                 <MDTypography style={{ fontSize: "14px", fontWeight: "500", color: "#000", width: "50%", overflow: "hidden",}}>
-                                  Groupe sanguin:   
+                                  Groupe sanguin:
                                 </MDTypography>
                                 <MDTypography style={{ fontSize: "14px", color: "red", width: "50%", overflow: "hidden", fontWeight: "500"}}>
                                   {theCard.bloodGroup != "" ? theCard.bloodGroup : "..."}

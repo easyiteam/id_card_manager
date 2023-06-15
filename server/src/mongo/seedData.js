@@ -1,28 +1,30 @@
-import bcrypt from "bcrypt";
-import mongoose from "mongoose";
-import { userModel } from "../schemas/user.schema.js";
-import { dbConnect } from "../mongo/index.js";
+import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
+import { userModel } from '../schemas/user.schema.js';
+import { dbConnect } from '../mongo/index.js';
 
-async function seedDB() {
-  dbConnect();
+export async function seedDB() {
   const salt = await bcrypt.genSalt(10);
-  const hashPassword = await bcrypt.hash("secret", salt);
+  const hashPassword = await bcrypt.hash('Admin@123', salt);
 
   const user = {
     _id: mongoose.Types.ObjectId(1),
-    name: "Admin",
-    email: "admin@jsonapi.com",
+    name: 'Admin',
+    email: 'admin@app.com',
     password: hashPassword,
     created_at: new Date(),
-    profile_image: "../../images/admin.jpg",
+    profile_image: '../../images/admin.jpg',
   };
 
   const admin = new userModel(user);
   await admin.save();
 
-  console.log("DB seeded");
+  return 'DB seeded';
 }
 
-seedDB().then(() => {
-  mongoose.connection.close();
-});
+export default () => {
+  dbConnect();
+  seedDB().then(() => {
+    mongoose.connection.close();
+  });
+};
